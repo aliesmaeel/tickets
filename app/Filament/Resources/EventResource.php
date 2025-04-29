@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 class EventResource extends Resource
 {
@@ -26,9 +27,14 @@ class EventResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('description')
-                    ->maxLength(255)
-                    ->default(null),
+                Translate::make()
+                    ->columnSpanFull()
+                    ->label('Description')
+                    ->schema([
+                    Forms\Components\Textarea::make('description')
+                        ->maxLength(255)
+                        ->default(null)
+                ])->locales(['en', 'ar']),
                 Forms\Components\FileUpload::make('image')
                     ->image(),
                 Forms\Components\Textarea::make('address')

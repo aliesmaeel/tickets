@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\LaravelPackageTools\Concerns\Package\HasTranslations;
 
 class Event extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'name',
         'description',
@@ -25,4 +28,7 @@ class Event extends Model
         'display_start_date' => 'datetime',
         'display_end_date' => 'datetime',
     ];
+
+    public $translatable = ['description'];
+
 }
