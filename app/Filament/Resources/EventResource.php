@@ -35,6 +35,7 @@ class EventResource extends Resource
                         ->maxLength(255)
                         ->default(null)
                 ])->locales(['en', 'ar']),
+
                 Forms\Components\FileUpload::make('image')
                     ->image(),
                 Forms\Components\Textarea::make('address')
