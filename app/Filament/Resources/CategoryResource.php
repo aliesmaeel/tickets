@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 class CategoryResource extends Resource
 {
@@ -23,9 +24,16 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+
+                Translate::make()
+                    ->label('Name')
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->default(null)
+                    ])->locales(['en', 'ar']),
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(255)
