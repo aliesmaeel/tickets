@@ -65,8 +65,6 @@ class EventResource extends Resource
                     ->relationship('category', 'name')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'])
                     ->required(),
-
-
                 Forms\Components\Toggle::make('active')
                     ->required(),
             ]);
