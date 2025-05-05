@@ -27,8 +27,18 @@ class Event extends Model
         'end_time' => 'datetime',
         'display_start_date' => 'datetime',
         'display_end_date' => 'datetime',
+        'description' => 'array',
+        'name' => 'array',
     ];
 
-    public $translatable = ['description'];
+    public $translatable = ['description','name'];
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 }

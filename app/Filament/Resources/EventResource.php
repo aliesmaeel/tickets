@@ -24,9 +24,16 @@ class EventResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Translate::make()
+                    ->label('Name')
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->default(null)
+                    ])->locales(['en', 'ar']),
+
                 Translate::make()
                     ->columnSpanFull()
                     ->label('Description')
@@ -51,7 +58,13 @@ class EventResource extends Resource
                     ->required(),
                 Forms\Components\DateTimePicker::make('display_end_date')
                     ->required(),
-
+               Forms\Components\Select::make('city_id')
+                    ->relationship('city', 'name')
+                    ->required(),
+                Forms\Components\Select::make('category_id')
+                    ->relationship('category', 'name')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'])
+                    ->required(),
                 Forms\Components\Toggle::make('active')
                     ->required(),
             ]);

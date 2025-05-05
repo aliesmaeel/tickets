@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->string('name',255)->nullable();
+            $table->text('description')->nullable();
             $table->string('image')->nullable();
             $table->text('address')->nullable();
             $table->string('address_link',250)->nullable();
@@ -22,6 +22,13 @@ return new class extends Migration
             $table->string('end_time');
             $table->string('display_start_date')->nullable();
             $table->string('display_end_date')->nullable();
+
+            $table->unsignedBigInteger('city_id')->nullable();
+            $table->foreign('city_id')->references('id')->on('cities')->nullOnDelete();
+
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
+
             $table->boolean('active')->default(true);
 
             $table->timestamps();
