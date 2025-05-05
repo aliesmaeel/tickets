@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('roles')->insert([
-            'name' => 'mobile-user',
+            'name' => 'customer',
             'guard_name' => 'api',
         ]);
 
