@@ -2,8 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\City;
+use App\Models\SeatClass;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Factories\CategoryFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -39,7 +43,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('roles')->insert([
-            'name' => 'mobile-user',
+            'name' => 'customer',
             'guard_name' => 'api',
         ]);
 
@@ -49,6 +53,9 @@ class DatabaseSeeder extends Seeder
             'model_id' => 2,
         ]);
 
+        Category::factory()->count(10)->create();
+        City::factory()->count(10)->create();
+        SeatClass::factory()->count(3)->create();
 
     }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name',255)->nullable();
             $table->text('description')->nullable();
+            $table->enum('type', ['party', 'football', 'concert', 'conference']);
             $table->string('image')->nullable();
             $table->text('address')->nullable();
             $table->string('address_link',250)->nullable();

@@ -63,7 +63,7 @@ class EventResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('category_id')
                     ->relationship('category', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'])
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'] ?? $record->name)
                     ->required(),
                 Forms\Components\Toggle::make('active')
                     ->required(),

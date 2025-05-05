@@ -20,6 +20,7 @@ class Event extends Model
         'display_start_date',
         'display_end_date',
         'active',
+        'type',
     ];
 
     protected $casts = [
