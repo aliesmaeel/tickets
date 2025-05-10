@@ -18,5 +18,6 @@ class RefreshDatabaseWithPermissions extends Command
         $this->call('permissions:sync');
 
         $this->info('✅ Done!');
+
     }
 }
