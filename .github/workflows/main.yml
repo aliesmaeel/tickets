@@ -33,6 +33,3 @@ jobs:
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-
-            # Set permissions (optional but recommended)
-            chmod -R ug+rwx storage bootstrap/cache
