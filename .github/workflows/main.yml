@@ -1,13 +1,9 @@
 name: Deploy To Production
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - ali-dev
-  pull_request:
-    branches:
-      - ali-dev
+      - main
 
 jobs:
   deploy:
@@ -23,9 +19,9 @@ jobs:
           port: ${{ secrets.PORT }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd /home/siteuser/htdocs/tickdot.app
+            cd /home/tickdot/htdocs/tickdot.app/tickets
             git checkout -- .
-            git pull origin ali-dev
+            git pull origin main
 
             # Laravel-specific setup
             composer install --no-interaction --prefer-dist --optimize-autoloader
@@ -33,6 +29,3 @@ jobs:
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-
-            # Set permissions (optional but recommended)
-            chmod -R ug+rwx storage bootstrap/cache

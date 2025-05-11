@@ -21,8 +21,4 @@ class EventSeat extends Model
         return $this->belongsTo(Event::class);
     }
 
-    public function seatClass()
-    {
-        return $this->belongsTo(SeatClass::class);
-    }
 }
