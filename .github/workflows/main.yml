@@ -24,7 +24,10 @@ jobs:
           script: |
             cd /home/tickdot/htdocs/tickdot.app/tickets
 
-            # Force update local code to match origin/main
+            # Allow Git to access this repo
+            git config --global --add safe.directory /home/tickdot/htdocs/tickdot.app/tickets
+
+            # Force sync with remote main
             git fetch origin
             git reset --hard origin/main
 
