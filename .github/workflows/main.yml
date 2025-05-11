@@ -23,7 +23,7 @@ jobs:
           port: ${{ secrets.PORT }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd /home/siteuser/htdocs/tickdot.app
+            cd /home/tickdot/htdocs/tickdot.app/tickets
             git checkout -- .
             git pull origin ali-dev
 
