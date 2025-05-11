@@ -22,10 +22,12 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             cd /home/tickdot/htdocs/tickdot.app/tickets
-            git checkout -- .
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
 
-            # Laravel-specific setup
+
+
+  # Laravel-specific setup
             composer install --no-interaction --prefer-dist --optimize-autoloader
             php artisan app:refresh-db-permissions
             php artisan config:cache
