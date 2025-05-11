@@ -1,13 +1,9 @@
 name: Deploy To Production
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - ali-dev
-  pull_request:
-    branches:
-      - ali-dev
+      - main
 
 jobs:
   deploy:
@@ -25,7 +21,7 @@ jobs:
           script: |
             cd /home/tickdot/htdocs/tickdot.app/tickets
             git checkout -- .
-            git pull origin ali-dev
+            git pull origin main
 
             # Laravel-specific setup
             composer install --no-interaction --prefer-dist --optimize-autoloader
