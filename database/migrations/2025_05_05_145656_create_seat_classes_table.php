@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('seat_classes', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // VIP, Regular, etc.
+            $table->string('name');
             $table->decimal('price', 8, 2);
+            $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->timestamps();
         });
-
     }
+
 
     /**
      * Reverse the migrations.

@@ -10,10 +10,15 @@ class SeatClass extends Model
 
     use HasFactory;
 
-    protected $fillable = ['name', 'price'];
+    protected $fillable = ['name', 'price', 'event_id'];
 
     public function eventSeats()
     {
         return $this->hasMany(EventSeat::class);
+    }
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
     }
 }

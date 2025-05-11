@@ -21,6 +21,7 @@ class SeatClassFactory extends Factory
         return [
             'name' => array_pop($this->arr),
             'price' => $this->faker->randomFloat(2, 10, 100),
+            'event_id' => 1,
         ];
     }
 }

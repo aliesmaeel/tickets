@@ -42,4 +42,9 @@ class Event extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    public function seats()
+    {
+        return $this->hasMany(EventSeat::class);
+    }
 }

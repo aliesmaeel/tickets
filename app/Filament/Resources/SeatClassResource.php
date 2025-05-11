@@ -30,6 +30,10 @@ class SeatClassResource extends Resource
                     ->required()
                     ->numeric()
                     ->prefix('$'),
+                Forms\Components\Select::make('event_id')
+                    ->relationship('event', 'name')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'] ?? $record->name)
+                    ->required(),
             ]);
     }
 
@@ -42,6 +46,8 @@ class SeatClassResource extends Resource
                 Tables\Columns\TextColumn::make('price')
                     ->money()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('event.name.en')
+                    ->label('Event'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
