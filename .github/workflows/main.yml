@@ -1,17 +1,18 @@
 name: Deploy To Production
 
 on:
-    push:
-      branches: [ main ]
-    pull_request:
-      branches: [ main ]
-
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
@@ -22,14 +23,21 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             cd /home/tickdot/htdocs/tickdot.app/tickets
+
+            # Force update local code to match origin/main
             git fetch origin
             git reset --hard origin/main
 
-
-
-  # Laravel-specific setup
+            # Laravel-specific setup
             composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan cache:clear
+
             php artisan app:refresh-db-permissions
+
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
