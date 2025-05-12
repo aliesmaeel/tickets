@@ -17,6 +17,8 @@ class CreateEventSeatsGrid extends Page implements HasForms
 
     protected static ?string $navigationGroup = 'Seat Management';
 
+    protected static ?int $navigationSort= 0;
+
     protected static ?string $navigationIcon = 'heroicon-o-plus';
     protected static string $view = 'filament.pages.create-event-seats-grid';
 
@@ -55,5 +57,7 @@ class CreateEventSeatsGrid extends Page implements HasForms
             return [$event->id => $event->name['en'] ?? $event->name];
         })->toArray();
     }
+
+
 
 }
