@@ -1,5 +1,7 @@
 <?php
 
+use App\Filament\Pages\CreateEventSeatsGrid;
+use App\Http\Controllers\SeatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -8,5 +10,7 @@ Route::get('/', function () {
 
 
 Route::middleware(['web', 'auth'])->group(function () {
-    Route::get('/get-seat-classes/{eventId}', [\App\Filament\Pages\CreateEventSeatsGrid::class, 'getSeatClassesAjax']);
+    Route::get('/get-seat-classes/{eventId}', [CreateEventSeatsGrid::class, 'getSeatClassesAjax']);
+    Route::post('/store-event-seats', [SeatController::class, 'store']);
+
 });

@@ -10,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 class EventResource extends Resource
@@ -19,7 +17,9 @@ class EventResource extends Resource
     protected static ?string $model = Event::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = 'Seat Management';
+    protected static ?string $navigationGroup = 'Event Management';
+
+    protected static ?int $navigationSort = 0;
 
     public static function form(Form $form): Form
     {

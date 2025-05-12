@@ -15,9 +15,11 @@ use Filament\Tables\Table;
 class SeatClassResource extends Resource
 {
     protected static ?string $model = SeatClass::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Seat Management';
+    protected static ?string $navigationGroup = 'Event Management';
+
+    protected static ?int $navigationSort = 0;
+
 
     public static function form(Form $form): Form
     {
@@ -100,6 +102,11 @@ class SeatClassResource extends Resource
             'create' => Pages\CreateSeatClass::route('/create'),
             'edit' => Pages\EditSeatClass::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Seat Events Classes');
     }
 
 }
