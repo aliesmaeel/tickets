@@ -10,8 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class SeatClassResource extends Resource
 {
@@ -26,15 +25,26 @@ class SeatClassResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->rules(fn (Forms\Get $get, ?\App\Models\SeatClass $record) => [
+                        new UniqueTogether(
+                            table: 'seat_classes',
+                            column1: 'name',
+                            column2: 'event_id',
+                            value2: $get('event_id'),
+                            ignoreId: $record?->id, // null for create, id for edit
+                        ),
+                    ]),
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
                     ->prefix('$'),
+
                 Forms\Components\ColorPicker::make('color')
                     ->required()
-                    ->default('#000000')
-                    ->label('Seat Class Color'),
+                    ->default('#e02828')
+                    ->label('Seat Class Color')
+                     ->required(),
 
                 Forms\Components\Select::make('event_id')
                     ->relationship('event', 'name')
@@ -91,4 +101,5 @@ class SeatClassResource extends Resource
             'edit' => Pages\EditSeatClass::route('/{record}/edit'),
         ];
     }
+
 }

@@ -1,3 +1,9 @@
+
+<style>
+    #balloon{
+        width: 150px;
+    }
+</style>
 <x-filament::page>
     <div class=" flex justify-between gap-4 items-center">
         <select id="event_id" class="block w-full rounded border-gray-300 shadow-sm">
@@ -18,9 +24,8 @@
     <div id="grid-container" class="mt-8 overflow-x-auto"></div>
 
     <!-- Balloon popup -->
-    <div id="balloon" onclick="event.stopPropagation()" class="hidden absolute z-50 bg-white border rounded shadow p-2 w-40">
+    <div id="balloon" onclick="event.stopPropagation()" class="hidden absolute z-50 bg-white border rounded shadow p-2">
         <select id="seat-class" class="block mb-2 border rounded w-full p-1">
-            <option value="">Seat Class</option>
         </select>
 
         <button onclick="applySelection()" class="bg-black/50 text-white px-3 py-1 rounded w-full">Submit</button>
@@ -172,7 +177,7 @@
         // Load seat classes when event is selected
         eventSelect.addEventListener('change', function () {
             const eventId = this.value;
-            seatClassSelect.innerHTML = '<option value="">Seat Class</option>'; // Clear previous
+            eventSelect.disabled= true;
 
             if (!eventId) return;
 
