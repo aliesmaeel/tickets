@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedInteger('row_number')->nullable();
             $table->unsignedInteger('column_number')->nullable();
             $table->string('seat_label')->nullable();
-            $table->string('color')->nullable();
             $table->boolean('is_reserved')->default(false);
             $table->timestamps();
         });
