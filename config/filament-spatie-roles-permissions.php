@@ -13,10 +13,11 @@ return [
 
     'navigation_section_group' => 'filament-spatie-roles-permissions::filament-spatie.section.roles_and_permissions', // Default uses language constant
 
+
     'team_model' => \App\Models\Team::class,
 
     'scope_to_tenant' => true,
-    
+
     'scope_roles_to_tenant' => true,
     'scope_premissions_to_tenant' => false,
 

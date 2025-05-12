@@ -15,13 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->foreignId('seat_class_id')->constrained()->onDelete('cascade');
-            $table->unsignedInteger('row_number')->nullable();
-            $table->unsignedInteger('column_number')->nullable();
-            $table->string('seat_label')->nullable();
-            $table->boolean('is_reserved')->default(false);
+            $table->string('row',5);
+            $table->string('col',5);
+            $table->string('status', 10)->default('available'); // available, blocked
             $table->timestamps();
         });
-
     }
 
     /**

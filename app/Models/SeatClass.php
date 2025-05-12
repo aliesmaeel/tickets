@@ -12,11 +12,6 @@ class SeatClass extends Model
 
     protected $fillable = ['name', 'price', 'event_id','color'];
 
-    public function eventSeats()
-    {
-        return $this->hasMany(EventSeat::class);
-    }
-
     public function event()
     {
         return $this->belongsTo(Event::class);
