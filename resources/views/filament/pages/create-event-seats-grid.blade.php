@@ -22,15 +22,6 @@
         <select id="seat-class" class="block mb-2 border rounded w-full p-1">
             <option value="">Seat Class</option>
         </select>
-        <select id="seat-color" class="block mb-2 border rounded w-full p-1">
-            <option value="">Choose Color</option>
-            <option value="mediumvioletred" style="color:mediumvioletred;">Red</option>
-            <option value="deepskyblue" style="color:deepskyblue;">Blue</option>
-            <option value="gold" style="color:gold;">Yellow</option>
-            <option value="green" style="color:green;">Green</option>
-            <option value="gray" style="color:gray;">Gray</option>
-            <option value="black" style="color:black;">Black</option>
-        </select>
 
         <button onclick="applySelection()" class="bg-black/50 text-white px-3 py-1 rounded w-full">Submit</button>
     </div>
@@ -145,23 +136,23 @@
         }
 
         function applySelection() {
-            const seatClassSelect = document.getElementById('seat-class');
-            const seatClassId = seatClassSelect.value;
-            const seatClassName = seatClassSelect.options[seatClassSelect.selectedIndex].text;
-            const color = document.getElementById('seat-color').value;
+            const selected = seatClassSelect.value;
+            if (!selected) return;
+
+            const { name, color } = JSON.parse(selected);
 
             selectedCells.forEach(cell => {
-                cell.textContent = seatClassName;
+                cell.textContent = name;
                 cell.style.backgroundColor = color;
-
-                cell.dataset.seatClassId = seatClassId;
-
-                cell.dataset.seatColor = color;
+                cell.dataset.seatClass = name;
+                cell.dataset.color = color;
             });
 
             document.getElementById('balloon').classList.add('hidden');
             clearSelection();
         }
+
+
 
 
         // Don't close the balloon when clicking inside it
@@ -175,14 +166,13 @@
     </script>
 
     <script>
-        document.getElementById('event_id').addEventListener('change', function (event) {
-            this.disabled=true;
+        const eventSelect = document.getElementById('event_id');
+        const seatClassSelect = document.getElementById('seat-class');
+
+        // Load seat classes when event is selected
+        eventSelect.addEventListener('change', function () {
             const eventId = this.value;
-
-            const seatClassSelect = document.getElementById('seat-class');
-
-            // Reset seat class dropdown
-            seatClassSelect.innerHTML = '<option value="">Empty</option>';
+            seatClassSelect.innerHTML = '<option value="">Seat Class</option>'; // Clear previous
 
             if (!eventId) return;
 
@@ -191,8 +181,9 @@
                 .then(data => {
                     data.forEach(cls => {
                         const option = document.createElement('option');
-                        option.value = cls.id;  // or cls.name if needed
+                        option.value = JSON.stringify({ id: cls.id, name: cls.name, color: cls.color });
                         option.textContent = cls.name;
+                        option.style.color = cls.color;
                         seatClassSelect.appendChild(option);
                     });
                 })
@@ -200,6 +191,7 @@
                     console.error('Error loading seat classes:', error);
                 });
         });
+
     </script>
 
 

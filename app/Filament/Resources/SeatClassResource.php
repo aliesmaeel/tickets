@@ -18,6 +18,7 @@ class SeatClassResource extends Resource
     protected static ?string $model = SeatClass::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Seat Management';
 
     public static function form(Form $form): Form
     {
@@ -30,6 +31,11 @@ class SeatClassResource extends Resource
                     ->required()
                     ->numeric()
                     ->prefix('$'),
+                Forms\Components\ColorPicker::make('color')
+                    ->required()
+                    ->default('#000000')
+                    ->label('Seat Class Color'),
+
                 Forms\Components\Select::make('event_id')
                     ->relationship('event', 'name')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'] ?? $record->name)

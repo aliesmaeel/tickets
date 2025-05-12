@@ -28,7 +28,7 @@ class CreateEventSeatsGrid extends Page implements HasForms
     public function getSeatClassesAjax($eventId): JsonResponse
     {
         $classes = \App\Models\SeatClass::where('event_id', $eventId)
-            ->get(['id', 'name']);
+            ->get(['id', 'name','price','color']);
         return response()->json($classes);
     }
 

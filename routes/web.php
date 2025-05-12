@@ -7,5 +7,6 @@ Route::get('/', function () {
 });
 
 
-
-Route::get('/get-seat-classes/{eventId}', [\App\Filament\Pages\CreateEventSeatsGrid::class, 'getSeatClassesAjax']);
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/get-seat-classes/{eventId}', [\App\Filament\Pages\CreateEventSeatsGrid::class, 'getSeatClassesAjax']);
+});
