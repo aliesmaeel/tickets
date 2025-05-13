@@ -17,15 +17,16 @@ class ViewEventSeats extends Page
 
     public function getEventsWithSeatData(): Collection
     {
-        $event= Event::withCount(['seats'])
-        ->get()
+        $event =Event::with('seats')->get();
+
+        $event= $event
             ->map(function ($event) {
 
                 return [
                     'id' => $event->id,
                     'name' => $event->name['en'] ?? $event->name,
-                    'rows' => sqrt($event->seats_count),
-                    'cols' =>  sqrt($event->seats_count),
+                    'rows' => $event->seats->max('row')+1 ==1 ? 0 : $event->seats->max('row')+1,
+                    'cols' =>  $event->seats->max('col')+1 ==1 ? 0 : $event->seats->max('col')+1,
                 ];
             });
 

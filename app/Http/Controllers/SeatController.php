@@ -89,28 +89,28 @@ class SeatController extends Controller
 
     public function getEventSeats($id)
     {
-        $event = Event::withCount('seats')->findOrFail($id);
+        $event = Event::with('seats.seatClass')->findOrFail($id);
 
-        $data= response()->json([
+        $maxRow = $event->seats->max('row')+1;
+        $maxCol = $event->seats->max('col')+1;
 
-            'rows' =>  sqrt($event->seats_count),
-            'cols' => sqrt($event->seats_count),
+        return response()->json([
+            'rows' => $maxRow,
+            'cols' => $maxCol,
             'seats' => $event->seats->map(function ($seat) {
                 return [
                     'row' => $seat->row,
                     'col' => $seat->col,
                     'seat_class_id' => $seat->seat_class_id,
-                    'seat_class_name' => $seat->seatClass->name,
-                    'color' => $seat->seatClass->color
+                    'seat_class_name' => $seat->seatClass->name ?? null,
+                    'color' => $seat->seatClass->color ?? null,
                 ];
             }),
         ]);
-
-        return $data;
     }
+
     public function getSeatClasses($event_id)
     {
-        dd($event_id);
         return response()->json(SeatClass::where('event_id', $event_id)->get());
     }
 
