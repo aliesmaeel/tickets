@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventSeat extends Model
 {
-
+    protected $table = 'event_seats';
     protected $fillable = [
         'event_id',
         'row',
