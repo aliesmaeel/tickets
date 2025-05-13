@@ -1,26 +1,26 @@
-
 <style>
-    #balloon{
+    #balloon {
         width: 150px;
     }
+    #grid-container {
+        min-height: 200px;
+        border: 1px dashed #ccc;
+        padding: 1rem;
+    }
 </style>
+
 <x-filament::page>
-    <div class=" flex justify-between gap-4 items-center">
-        <select id="event_id" class="block w-full rounded border-gray-300 shadow-sm">
-            <option value="">-- Select an event --</option>
-            @foreach ($this->events as $id => $name)
-                <option value="{{ $id }}">{{ $name }}</option>
-            @endforeach
-        </select>
+    <div class="flex flex-wrap items-center gap-4">
+        <input type="hidden" id="event_id" value="{{ $event_id }}" />
 
-        <input type="number" id="rows" placeholder="Rows" class="block w-full rounded border-gray-300 shadow-sm " />
-        <input type="number" id="cols" placeholder="Columns" class="block w-full rounded border-gray-300 shadow-sm" />
+        <input type="number" id="rows" placeholder="Rows" class="w-24 rounded border-gray-300 shadow-sm" />
+        <input type="number" id="cols" placeholder="Columns" class="w-24 rounded border-gray-300 shadow-sm" />
 
-        <button onclick="generateGrid()" class="text-white px-4 py-2 rounded bg-black/50">
+        <button onclick="generateGridFromInputs()" class="bg-black/50 text-white px-4 py-2 rounded">
             Generate
         </button>
 
-        <button onclick="saveGrid()" class="mt-4 bg-black/50 text-white px-4 py-2 rounded w-full">
+        <button onclick="saveGrid()" class="bg-black/50 text-white px-4 py-2 rounded">
             Save Seats
         </button>
     </div>
@@ -29,71 +29,85 @@
 
     <!-- Balloon popup -->
     <div id="balloon" onclick="event.stopPropagation()" class="hidden absolute z-50 bg-white border rounded shadow p-2">
-        <select id="seat-class" class="block mb-2 border rounded w-full p-1">
-        </select>
-
+        <select id="seat-class" class="block mb-2 border rounded w-full p-1"></select>
         <button onclick="applySelection()" class="bg-black/50 text-white px-3 py-1 rounded w-full">Submit</button>
     </div>
 
-
-
-
     <script>
         let selectedCells = [];
-
-        const eventSelect = document.getElementById('event_id');
-        const seatClassSelect = document.getElementById('seat-class');
+        const eventId = document.getElementById('event_id').value;
         const gridContainer = document.getElementById('grid-container');
+        const seatClassSelect = document.getElementById('seat-class');
         const balloon = document.getElementById('balloon');
+        let stageClass = null;
 
-        eventSelect.addEventListener('change', function () {
-            const eventId = this.value;
-            seatClassSelect.innerHTML = ''; // Clear previous options
-
+        window.addEventListener('DOMContentLoaded', async () => {
             if (!eventId) return;
 
-            fetch(`/get-seat-classes/${eventId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(cls => {
-                        const option = document.createElement('option');
-                        option.value = JSON.stringify({ id: cls.id, name: cls.name, color: cls.color });
-                        option.textContent = cls.name;
-                        option.style.color = cls.color;
-                        seatClassSelect.appendChild(option);
-                    });
-                })
-                .catch(console.error);
+            try {
+                const [seatClassesRes, seatDataRes] = await Promise.all([
+                    fetch(`/get-seat-classes/${eventId}`),
+                    fetch(`/get-event-seats/${eventId}`)
+                ]);
+
+                const seatClasses = await seatClassesRes.json();
+                const seatData = await seatDataRes.json();
+
+                // Populate dropdown
+                seatClassSelect.innerHTML = '';
+                seatClasses.forEach(cls => {
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(cls);
+                    option.textContent = cls.name;
+                    option.style.color = cls.color;
+                    seatClassSelect.appendChild(option);
+                });
+
+                stageClass = seatClasses.find(cls => cls.name.toLowerCase() === 'empty');
+
+                document.getElementById('rows').value = seatData.rows;
+                document.getElementById('cols').value = seatData.cols;
+
+                generateInitialGrid(seatData);
+
+            } catch (err) {
+                console.error('Failed to load data:', err);
+            }
         });
 
-        function generateGrid() {
+        function generateInitialGrid(seatData) {
+            const rows = parseInt(seatData.rows);
+            const cols = parseInt(seatData.cols);
+            generateGrid(rows, cols, seatData.seats);
+        }
+
+        function generateGridFromInputs() {
             const rows = parseInt(document.getElementById('rows').value);
             const cols = parseInt(document.getElementById('cols').value);
+            generateGrid(rows, cols);
+        }
+
+        function generateGrid(rows, cols, seats = []) {
             gridContainer.innerHTML = '';
             hideBalloon();
             selectedCells = [];
 
-            // Find the stage class
-            let stageClass = null;
-            Array.from(seatClassSelect.options).forEach(opt => {
-                const cls = JSON.parse(opt.value);
-                if (cls.name.toLowerCase() === 'empty') {
-                    stageClass = cls;
-                }
-            });
-
             const table = document.createElement('table');
-            table.classList.add('table-auto', 'border-collapse');
+            table.className = 'table-auto border-collapse';
 
-            // Column selector header
+            // Header row
             const header = document.createElement('tr');
             header.appendChild(document.createElement('th'));
+
             for (let col = 0; col < cols; col++) {
                 const th = document.createElement('th');
                 const btn = document.createElement('button');
                 btn.textContent = '↓';
                 btn.className = 'bg-gray-200 px-2 py-1 rounded text-xs mx-auto block';
-                btn.onclick = (e) => { e.stopPropagation(); selectColumn(col); };
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectColumn(col);
+                };
                 th.appendChild(btn);
                 header.appendChild(th);
             }
@@ -101,12 +115,14 @@
 
             for (let row = 0; row < rows; row++) {
                 const tr = document.createElement('tr');
-
                 const th = document.createElement('th');
                 const btn = document.createElement('button');
                 btn.textContent = '→';
                 btn.className = 'bg-gray-200 px-2 py-1 rounded text-xs mx-auto block';
-                btn.onclick = (e) => { e.stopPropagation(); selectRow(row); };
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectRow(row);
+                };
                 th.appendChild(btn);
                 tr.appendChild(th);
 
@@ -116,15 +132,17 @@
                     td.dataset.row = row;
                     td.dataset.col = col;
 
-                    // Fill with Stage data if available
-                    if (stageClass) {
-                        td.textContent = 'empty';
-                        td.style.backgroundColor = stageClass.color;
-                        td.style.color = '#000000';
+                    const matched = seats.find(seat => +seat.row === row && +seat.col === col);
+                    const seatInfo = matched || stageClass;
+
+                    if (seatInfo) {
+                        td.textContent = seatInfo.seat_class_name || seatInfo.name || 'empty';
+                        td.style.backgroundColor = seatInfo.color || '#ccc';
+                        td.style.color = '#000';
                         td.dataset.seatClass = JSON.stringify({
-                            id: stageClass.id,
-                            name: stageClass.name,
-                            color: stageClass.color
+                            id: seatInfo.seat_class_id || seatInfo.id,
+                            name: seatInfo.seat_class_name || seatInfo.name,
+                            color: seatInfo.color
                         });
                     }
 
@@ -145,28 +163,30 @@
             gridContainer.appendChild(table);
         }
 
-
         function clearSelection() {
-            document.querySelectorAll('td').forEach(cell =>
-                cell.classList.remove('ring', 'ring-blue-500', 'ring-yellow-400')
-            );
+            document.querySelectorAll('td').forEach(cell => {
+                cell.classList.remove('ring', 'ring-blue-500', 'ring-yellow-400');
+            });
             selectedCells = [];
         }
 
         function selectRow(rowIndex) {
             clearSelection();
-            selectedCells = Array.from(document.querySelectorAll(`[data-row="${rowIndex}"]`));
+            selectedCells = Array.from(document.querySelectorAll(`td[data-row="${rowIndex}"]`));
             selectedCells.forEach(cell => cell.classList.add('ring', 'ring-yellow-400'));
-            const { x, y } = selectedCells[0].getBoundingClientRect();
-            showBalloon(x + window.scrollX, y + window.scrollY);
+            showPopupAtCell(selectedCells[0]);
         }
 
         function selectColumn(colIndex) {
             clearSelection();
-            selectedCells = Array.from(document.querySelectorAll(`[data-col="${colIndex}"]`));
+            selectedCells = Array.from(document.querySelectorAll(`td[data-col="${colIndex}"]`));
             selectedCells.forEach(cell => cell.classList.add('ring', 'ring-yellow-400'));
-            const { x, y } = selectedCells[0].getBoundingClientRect();
-            showBalloon(x + window.scrollX, y + window.scrollY);
+            showPopupAtCell(selectedCells[0]);
+        }
+
+        function showPopupAtCell(cell) {
+            const rect = cell.getBoundingClientRect();
+            showBalloon(rect.left + window.scrollX, rect.top + window.scrollY);
         }
 
         function showBalloon(x, y) {
@@ -188,32 +208,30 @@
             selectedCells.forEach(cell => {
                 cell.textContent = name;
                 cell.style.backgroundColor = color;
-
                 cell.dataset.seatClass = JSON.stringify({ id, name, color });
             });
+
             hideBalloon();
             clearSelection();
         }
 
         function saveGrid() {
-            const eventId = eventSelect.value;
             const rows = parseInt(document.getElementById('rows').value);
             const cols = parseInt(document.getElementById('cols').value);
 
-            if (!eventId) return alert('Please select an event.');
+            if (!eventId) return alert('Event ID missing.');
 
-            const seats = [];
-            document.querySelectorAll('#grid-container td').forEach(cell => {
-                if (cell.dataset.seatClass) {
+            const seats = Array.from(document.querySelectorAll('#grid-container td'))
+                .map(cell => {
+                    if (!cell.dataset.seatClass) return null;
                     const seatClass = JSON.parse(cell.dataset.seatClass);
-                    seats.push({
+                    return {
                         row: parseInt(cell.dataset.row),
                         col: parseInt(cell.dataset.col),
                         seat_class_id: seatClass.id,
-                        seat_class_name: seatClass.name,
-                    });
-                }
-            });
+                        seat_class_name: seatClass.name
+                    };
+                }).filter(Boolean);
 
             fetch('/store-event-seats', {
                 method: 'POST',
@@ -225,19 +243,14 @@
                     event_id: eventId,
                     data: { rows, cols, seats }
                 })
-            })
-                .then(() => {
-                    alert('Seat layout saved successfully!');
-                    window.location.href = '/admin/view-event-seats';
-                })
-                .catch(err => {
-                    console.error('Error saving:', err);
-                    alert('Failed to save seat layout.');
-                });
-
+            }).then(() => {
+                alert('Seat layout saved successfully!');
+                window.location.href = '/admin/view-event-seats';
+            }).catch(err => {
+                alert('Failed to save layout.');
+            });
         }
 
-        // Close balloon when clicking outside
         document.addEventListener('click', (e) => {
             if (!balloon.contains(e.target)) {
                 hideBalloon();
@@ -245,7 +258,4 @@
             }
         });
     </script>
-
-
-
 </x-filament::page>

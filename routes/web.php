@@ -10,7 +10,14 @@ Route::get('/', function () {
 
 
 Route::middleware(['web', 'auth'])->group(function () {
+
     Route::get('/get-seat-classes/{eventId}', [CreateEventSeatsGrid::class, 'getSeatClassesAjax']);
+
+    Route::delete('/event-seats/{event}', [SeatController::class, 'destroy'])->name('event-seats.delete');
+    Route::get('/edit-event-seats/{id}', [SeatController::class, 'edit'])->name('event-seats.edit');
+    Route::post('/update-event-seats', [SeatController::class, 'update'])->name('event-seats.update');
+
+    Route::get('/get-event-seats/{event_id}', [SeatController::class, 'getEventSeats']);
     Route::post('/store-event-seats', [SeatController::class, 'store']);
 
 });

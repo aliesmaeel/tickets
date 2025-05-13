@@ -9,6 +9,8 @@ class Event extends Model
 {
     use HasTranslations;
 
+
+
     protected $fillable = [
         'name',
         'description',
