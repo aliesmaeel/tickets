@@ -45,13 +45,13 @@
             Add Row
         </button>
         <button onclick="deleteLastRow()" class="delete text-white px-3 py-1 rounded">
-            Delete Row
+            Delete Last Row
         </button>
         <button onclick="addColumn()" class="add text-white px-3 py-1 rounded">
             Add Column
         </button>
         <button onclick="deleteLastColumn()" class="delete text-white px-3 py-1 rounded">
-            Delete Column
+            Delete Last Column
         </button>
     </div>
 
@@ -361,24 +361,28 @@
             let rows = parseInt(rowsInput.value);
             if (rows <= 0) return;
 
-            currentSeats = currentSeats.filter(seat => seat.row < rows - 1);
             rowsInput.value = rows - 1;
 
             const cols = parseInt(document.getElementById('cols').value);
+            currentSeats = currentSeats.filter(seat => seat.row < rows - 1);
+
             generateGrid(rows - 1, cols, currentSeats);
         }
+
 
         function deleteLastColumn() {
             const colsInput = document.getElementById('cols');
             let cols = parseInt(colsInput.value);
             if (cols <= 0) return;
 
-            currentSeats = currentSeats.filter(seat => seat.col < cols - 1);
             colsInput.value = cols - 1;
 
             const rows = parseInt(document.getElementById('rows').value);
+            currentSeats = currentSeats.filter(seat => seat.col < cols - 1);
+
             generateGrid(rows, cols - 1, currentSeats);
         }
+
 
     </script>
 </x-filament::page>
