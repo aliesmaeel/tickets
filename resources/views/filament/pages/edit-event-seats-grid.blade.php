@@ -7,6 +7,10 @@
         border: 1px dashed #ccc;
         padding: 1rem;
     }
+    .bg-orange {
+        background-color: #FFA500;
+        color: white;
+    }
 </style>
 
 <x-filament::page>
@@ -28,10 +32,25 @@
     <div id="grid-container" class="mt-8 overflow-x-auto"></div>
 
     <!-- Balloon popup -->
-    <div id="balloon" onclick="event.stopPropagation()" class="hidden absolute z-50 bg-white border rounded shadow p-2">
+    <div id="balloon" onclick="event.stopPropagation()" class="hidden absolute z-50 bg-white border rounded shadow p-2 flex gap-4 flex-col">
         <select id="seat-class" class="block mb-2 border rounded w-full p-1"></select>
         <button onclick="applySelection()" class="bg-black/50 text-white px-3 py-1 rounded w-full">Submit</button>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showToast(message, icon = 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true,
+                icon: icon,
+                title: message
+            });
+        }
+
+    </script>
 
     <script>
         let selectedCells = [];
@@ -152,6 +171,7 @@
                         td.classList.add('ring', 'ring-blue-500');
                         selectedCells = [td];
                         showBalloon(e.pageX, e.pageY);
+
                     };
 
                     tr.appendChild(td);
@@ -201,11 +221,13 @@
 
         function applySelection() {
             const selected = seatClassSelect.value;
+
             if (!selected) return;
 
             const { id, name, color } = JSON.parse(selected);
 
             selectedCells.forEach(cell => {
+
                 cell.textContent = name;
                 cell.style.backgroundColor = color;
                 cell.dataset.seatClass = JSON.stringify({ id, name, color });
@@ -219,7 +241,10 @@
             const rows = parseInt(document.getElementById('rows').value);
             const cols = parseInt(document.getElementById('cols').value);
 
-            if (!eventId) return alert('Event ID missing.');
+            if (!eventId) {
+                showToast('Event ID missing.', 'error');
+                return;
+            }
 
             const seats = Array.from(document.querySelectorAll('#grid-container td'))
                 .map(cell => {
@@ -244,12 +269,15 @@
                     data: { rows, cols, seats }
                 })
             }).then(() => {
-                alert('Seat layout saved successfully!');
-                window.location.href = '/admin/view-event-seats';
-            }).catch(err => {
-                alert('Failed to save layout.');
+                showToast('Seat layout saved successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'edit-event-seats-grid?event_id=' + eventId;
+                }, 1300);
+            }).catch(() => {
+                showToast('Failed to save layout.', 'error');
             });
         }
+
 
         document.addEventListener('click', (e) => {
             if (!balloon.contains(e.target)) {
