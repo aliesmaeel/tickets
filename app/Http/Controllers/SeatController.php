@@ -72,7 +72,7 @@ class SeatController extends Controller
         ]);
 
         foreach ($validated['updates'] as $seatData) {
-            \App\Models\EventSeat::updateOrCreate(
+            EventSeat::updateOrCreate(
                 [
                     'event_id' => $validated['event_id'],
                     'row' => $seatData['row'],

@@ -35,7 +35,21 @@
         <button onclick="applySelection()" class="bg-black/50 text-white px-3 py-1 rounded w-full">Submit</button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showToast(message, icon = 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true,
+                icon: icon,
+                title: message
+            });
+        }
 
+    </script>
 
 
     <script>
@@ -227,8 +241,10 @@
                 })
             })
                 .then(() => {
-                    alert('Seat layout saved successfully!');
-                    window.location.href = '/admin/view-event-seats';
+                    showToast('Seat layout saved successfully!');
+                    window.setTimeout(() => {
+                        window.location.href = '/admin/view-event-seats';
+                    }, 1000);
                 })
                 .catch(err => {
                     console.error('Error saving:', err);
