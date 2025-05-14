@@ -11,6 +11,18 @@
         background-color: #FFA500;
         color: white;
     }
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+    .add{
+        background-color: #007bff;
+        color: white;
+    }
+    .delete{
+        background-color: #dc3545;
+        color: white;
+    }
 </style>
 
 <x-filament::page>
@@ -24,8 +36,22 @@
             Generate
         </button>
 
-        <button onclick="saveGrid()" class="bg-black/50 text-white px-4 py-2 rounded">
+        <button onclick="saveGrid()" class="btn-success text-white px-4 py-2 rounded">
             Save Seats
+        </button>
+    </div>
+    <div class="flex flex-row gap-4">
+        <button onclick="addRow()" class="add text-white px-3 py-1 rounded">
+            Add Row
+        </button>
+        <button onclick="deleteLastRow()" class="delete text-white px-3 py-1 rounded">
+            Delete Row
+        </button>
+        <button onclick="addColumn()" class="add text-white px-3 py-1 rounded">
+            Add Column
+        </button>
+        <button onclick="deleteLastColumn()" class="delete text-white px-3 py-1 rounded">
+            Delete Column
         </button>
     </div>
 
@@ -53,6 +79,8 @@
     </script>
 
     <script>
+        let currentSeats = [];
+
         let selectedCells = [];
         const eventId = document.getElementById('event_id').value;
         const gridContainer = document.getElementById('grid-container');
@@ -107,6 +135,8 @@
         }
 
         function generateGrid(rows, cols, seats = []) {
+            currentSeats = seats; // <-- Add this line
+
             gridContainer.innerHTML = '';
             hideBalloon();
             selectedCells = [];
@@ -285,5 +315,70 @@
                 clearSelection();
             }
         });
+
+        function addRow() {
+            const rowsInput = document.getElementById('rows');
+            const rows = parseInt(rowsInput.value);
+            const cols = parseInt(document.getElementById('cols').value);
+            rowsInput.value = rows + 1;
+
+
+            for (let col = 0; col < cols; col++) {
+                currentSeats.push({
+                    row: rows,
+                    col: col,
+                    seat_class_id: stageClass?.id || null,
+                    seat_class_name: stageClass?.name || 'empty',
+                    color: stageClass?.color || '#ccc',
+                });
+            }
+
+            generateGrid(rows + 1, cols, currentSeats);
+        }
+
+        function addColumn() {
+            const colsInput = document.getElementById('cols');
+            const cols = parseInt(colsInput.value);
+            const rows = parseInt(document.getElementById('rows').value);
+            colsInput.value = cols + 1;
+
+            // Add empty column to currentSeats
+            for (let row = 0; row < rows; row++) {
+                currentSeats.push({
+                    row: row,
+                    col: cols,
+                    seat_class_id: stageClass?.id || null,
+                    seat_class_name: stageClass?.name || 'empty',
+                    color: stageClass?.color || '#ccc',
+                });
+            }
+
+            generateGrid(rows, cols + 1, currentSeats);
+        }
+
+        function deleteLastRow() {
+            const rowsInput = document.getElementById('rows');
+            let rows = parseInt(rowsInput.value);
+            if (rows <= 0) return;
+
+            currentSeats = currentSeats.filter(seat => seat.row < rows - 1);
+            rowsInput.value = rows - 1;
+
+            const cols = parseInt(document.getElementById('cols').value);
+            generateGrid(rows - 1, cols, currentSeats);
+        }
+
+        function deleteLastColumn() {
+            const colsInput = document.getElementById('cols');
+            let cols = parseInt(colsInput.value);
+            if (cols <= 0) return;
+
+            currentSeats = currentSeats.filter(seat => seat.col < cols - 1);
+            colsInput.value = cols - 1;
+
+            const rows = parseInt(document.getElementById('rows').value);
+            generateGrid(rows, cols - 1, currentSeats);
+        }
+
     </script>
 </x-filament::page>
