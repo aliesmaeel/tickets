@@ -52,7 +52,7 @@ class SeatController extends Controller
     {
         $event = Event::findOrFail($eventId);
         $seatClasses = SeatClass::where('event_id', $eventId)->get();
-        $seats = $event->seats()->get(); // Assuming you have relation `seats()`
+        $seats = $event->seats()->get();
 
         return view('filament.pages.edit-event-seats-grid', [
             'event' => $event,
@@ -63,12 +63,13 @@ class SeatController extends Controller
 
     public function update(Request $request)
     {
+
         $validated = $request->validate([
             'event_id' => 'required|exists:events,id',
-            'updates' => 'required|array',
+            'data.seats' => 'required|array',
         ]);
 
-        foreach ($validated['updates'] as $seatData) {
+        foreach ($validated['data']['seats'] as $seatData) {
             EventSeat::updateOrCreate(
                 [
                     'event_id' => $validated['event_id'],

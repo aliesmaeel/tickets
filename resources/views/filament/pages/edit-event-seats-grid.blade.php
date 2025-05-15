@@ -288,7 +288,7 @@
                     };
                 }).filter(Boolean);
 
-            fetch('/store-event-seats', {
+            fetch('/update-event-seats', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -302,7 +302,7 @@
                 showToast('Seat layout saved successfully!', 'success');
                 setTimeout(() => {
                     window.location.href = 'edit-event-seats-grid?event_id=' + eventId;
-                }, 1300);
+                }, 1000);
             }).catch(() => {
                 showToast('Failed to save layout.', 'error');
             });
