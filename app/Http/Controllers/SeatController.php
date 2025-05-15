@@ -18,8 +18,6 @@ class SeatController extends Controller
             'data.seats' => 'required|array',
         ]);
 
-       $oldEventSeats = EventSeat::where('event_id', $request->event_id)->delete();
-
         foreach ($request->data['seats'] as $seat) {
             EventSeat::create([
                 'event_id' => $request->event_id,
@@ -29,7 +27,6 @@ class SeatController extends Controller
                 'status' => $this->getSeatStatus($seat['seat_class_name']),
             ]);
         }
-
 
         return response()->json(['success' => true]);
     }
