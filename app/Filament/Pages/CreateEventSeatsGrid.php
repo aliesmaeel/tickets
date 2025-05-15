@@ -53,7 +53,7 @@ class CreateEventSeatsGrid extends Page implements HasForms
 
     public function getEventsProperty()
     {
-        return Event::whereDoesntHave('seats')->get()->mapWithKeys(function ($event) {
+        return Event::all()->mapWithKeys(function ($event) {
             return [$event->id => $event->name['en'] ?? $event->name];
         })->toArray();
     }
