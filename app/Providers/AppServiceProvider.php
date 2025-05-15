@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\EventSeat;
 use App\Models\SeatClass;
 use App\Observers\GenerateDefaultSeatsObserver;
 use Illuminate\Support\ServiceProvider;

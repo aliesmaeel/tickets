@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SeatClassResource\Pages;
 use App\Filament\Resources\SeatClassResource\RelationManagers;
+use App\Models\Event;
 use App\Models\SeatClass;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -76,8 +77,23 @@ class SeatClassResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('name')
+                    ->label('Seat Class Name')
+                    ->options(fn () => \App\Models\SeatClass::query()
+                        ->select('name')
+                        ->distinct()
+                        ->pluck('name', 'name')
+                    ),
+
+                Tables\Filters\SelectFilter::make('event_id')
+                    ->label('Event')
+                    ->options(function () {
+                        return Event::all()->pluck('name.en', 'id');
+                    }),
+
             ])
+
+
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
