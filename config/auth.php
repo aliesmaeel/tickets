@@ -42,7 +42,7 @@ return [
         ],
         'api' => [
             'driver' => 'sanctum',
-            'provider' => 'users',
+            'provider' => 'customers',
         ],
     ],
 
@@ -68,6 +68,13 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
+        'providers' => [
+            'customers' => [
+                'driver' => 'eloquent',
+                'model' => App\Models\Customer::class,
+            ],
+        ],
+
 
         // 'users' => [
         //     'driver' => 'database',
