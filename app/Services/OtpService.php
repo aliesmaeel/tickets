@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Customer;
 use Illuminate\Support\Facades\Http;
 
 class OtpService
@@ -18,23 +19,31 @@ class OtpService
         $this->apiToken = config('services.standingtech.token');
     }
 
-    public function send($phone, $lang = null, $data = [])
+    public function send($phone, $lang = null, $data): bool
     {
-        $otp = rand(100000, 999999);
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiToken,
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ])->post($this->sendUrl, [
-            'recipient' => $phone,
-            'sender_id' => $this->sender,
-            'type' => $this->type,
-            'message' => (string) $otp,
-            'lang' => $lang ?? $this->lang,
-        ]);
+        try{
 
-        if ($response->successful() && $response->json('status') === 'success') {
+            // Generate a random OTP
+            $otp = rand(100000, 999999);
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiToken,
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])
+
+                ->post($this->sendUrl, [
+                'recipient' => $phone,
+                'sender_id' => $this->sender,
+                'type' => $this->type,
+                'message' => (string) $otp,
+                'lang' => $lang ?? $this->lang,
+            ]);
+
+            if ($response->successful() && $response->json('status') === 'success') {
+
+
             cache()->put("otp:{$phone}", [
                 'code' => $otp,
                 'id' => $response->json('id'),
@@ -44,10 +53,21 @@ class OtpService
                 cache()->put("register:{$phone}", $data, now()->addMinutes(10));
             }
 
-            return true;
+                return true;
+            }
+            logger()->error('Error sending OTP:', ['error' => $response->json('error.message') ?? 'Failed to send OTP']);
+            return false;
+
+
+        }catch (\Throwable $e) {
+            logger()->error('Error sending OTP:', ['error' => $e->getMessage()]);
+            return false;
         }
 
-        throw new \Exception($response->json('error.message') ?? 'Failed to send OTP');
+
+
+
+       // throw new \Exception($response->json('error.message') ?? 'Failed to send OTP');
     }
 
 
@@ -66,5 +86,13 @@ class OtpService
         cache()->forget("otp:{$phone}");
         return true;
     }
+
+//    public function verify($phone, $code)
+//    {
+//        $checkOtp = Customer::where('phone', $phone)
+//            ->where('otp', $code)
+//            ->exists();
+//        return $checkOtp;
+//    }
 }
 
