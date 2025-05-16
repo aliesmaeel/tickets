@@ -19,9 +19,9 @@ class CustomerProfileController extends Controller
         ], 'Profile fetched successfully');
     }
 
-    public function update(Request $request)
+    public function updateProfile(Request $request)
     {
-        $data = $request->only('name', 'lang', 'password');
+        $data = $request->only('name', 'lang', 'password','password_confirmation','image');
 
         $validator = Validator::make($data, [
             'name' => 'nullable|string|max:255',
@@ -47,10 +47,10 @@ class CustomerProfileController extends Controller
             $customer->password = Hash::make($data['password']);
         }
 
-        if($request->hasFile('profile_image')) {
-            $file = $request->file('profile_image');
-            $path = $file->store('profile_images', 'customers');
-            $customer->profile_image = $path;
+        if($request->hasFile('image')) {
+            $file = $request->file('image');
+            $path = $file->store('images', 'customers');
+            $customer->image = $path;
         }
 
         $customer->save();
