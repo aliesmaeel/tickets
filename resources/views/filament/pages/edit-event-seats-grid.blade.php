@@ -69,7 +69,7 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 1000,
+                timer: 500,
                 timerProgressBar: true,
                 icon: icon,
                 title: message
@@ -302,7 +302,7 @@
                 showToast('Seat layout saved successfully!', 'success');
                 setTimeout(() => {
                     window.location.href = 'edit-event-seats-grid?event_id=' + eventId;
-                }, 1000);
+                }, 500);
             }).catch(() => {
                 showToast('Failed to save layout.', 'error');
             });
