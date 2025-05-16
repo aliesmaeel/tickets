@@ -17,9 +17,10 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('password');
             $table->string('image',90)->nullable();
-            $table->boolean('is_active')->default(1);
+            $table->boolean('is_active')->default(0);
             $table->string('remember_token')->nullable();
             $table->string('lang')->default('en');
+            $table->string('device_token')->nullable();
             $table->timestamps();
         });
     }

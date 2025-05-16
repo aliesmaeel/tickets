@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\CustomerApiResource;
 use App\Models\Customer;
 use App\Services\OtpService;
 use App\Traits\ApiResponse;
@@ -23,110 +24,134 @@ class CustomerAuthController extends Controller
 
     public function registerRequest(Request $request)
     {
-        $data = $request->only('phone', 'password', 'name', 'lang');
-
-        $validator = Validator::make($data, [
-            'phone' => 'required|unique:customers,phone',
-            'password' => 'required|min:6',
-            'name' => 'required|string',
-            'lang' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->error($validator->errors(), 'Validation failed', 422);
-        }
-
         try {
-            $this->otpService->send($data['phone'], $data['lang'], [
-                'password' => $data['password'],
-                'name' => $data['name'],
-                'lang' => $data['lang'],
-                'recipient' => $data['phone'],
+
+            $data = $request->only('phone', 'password', 'name', 'lang');
+
+            $validator = Validator::make($data, [
+                'phone' => 'required|unique:customers,phone',
+                'password' => 'required|min:6',
+                'name' => 'required|string',
+                'lang' => 'required|string',
             ]);
 
+            if ($validator->fails()) {
+                return $this->respondValidationErrors($validator->errors()?->toArray());
+            }
 
-            $cached = cache("otp:{$data['phone']}");
-            logger()->info('OTP cache data:', ['otp' => $cached]);
+           if($this->otpService->send($data['phone'], $data['lang'], $data) ){
 
-        } catch (\Exception $e) {
-            return $this->error([], $e->getMessage(), 500);
+               //Optionally, log the cached data for debugging
+               $cached = cache("otp:{$data['phone']}");
+               logger()->info('OTP cache data:', ['otp' => $cached]);
+
+
+               return $this->respondSuccess('OTP has sent to your phone successfully');
+           }
+
+           return $this->respondError('Failed to send OTP', null, 500);
+
+
+
+        }catch (\Exception $e){
+            logger()->error('Register error:', ['error' => $e->getMessage()]);
+            return $this->respondError();
         }
-
-        return $this->success([], 'OTP sent to your phone');
     }
 
     public function registerVerify(Request $request)
     {
-        $data = $request->only('recipient', 'code');
+        try {
 
-        $validator = Validator::make($data, [
-            'recipient' => 'required',
-            'code' => 'required',
-        ]);
+            $data = $request->only('recipient', 'code');
 
-        if ($validator->fails()) {
-            return $this->error($validator->errors(), 'Validation failed', 422);
+            $validator = Validator::make($data, [
+                'recipient' => 'required|exists:customers,phone',
+                'code' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->respondValidationErrors($validator->errors()->toArray());
+            }
+
+            if (!$this->otpService->verify($data['recipient'], $data['code'])) {
+                return $this->respondError('The OTP provided is invalid. Please try again.', null, 401);
+            }
+
+            $cached = cache("register:{$data['recipient']}");
+
+            if (!$cached || !isset($cached['password'])) {
+                return $this->respondError('No registration data found', null, 400);
+            }
+
+
+            $customer = Customer::create([
+                'phone' => $cached['recipient'],
+                'password' => Hash::make($cached['password']),
+                'name' => $cached['name'] ?? null,
+                'is_active' => true,
+                'lang' => $cached['lang'] ?? null,
+            ]);
+
+            cache()->forget("otp:{$data['recipient']}");
+            cache()->forget("register:{$data['recipient']}");
+
+
+            $token = $customer->createToken('auth_token')->plainTextToken;
+
+            $customer = CustomerApiResource::make($customer);
+
+            return $this->respondValue([
+                'token' => $token,
+                'customer' => $customer,
+            ], 'Customer registered successfully');
+
+        } catch (\Exception $e){
+            logger()->error('Register error:', ['error' => $e->getMessage()]);
+            return $this->respondError();
         }
-
-        if (!$this->otpService->verify($data['recipient'], $data['code'])) {
-            return $this->error([], 'Invalid OTP', 401);
-        }
-
-        $cached = cache("register:{$data['recipient']}");
-        if (!$cached || !isset($cached['password'])) {
-            return $this->error([], 'No registration data found', 400);
-        }
-
-
-        $customer = Customer::create([
-            'phone' => $cached['recipient'],
-            'password' => Hash::make($cached['password']),
-            'name' => $cached['name'] ?? null,
-            'is_active' => true,
-            'lang' => $cached['lang'] ?? null,
-        ]);
-
-        cache()->forget("otp:{$data['recipient']}");
-        cache()->forget("register:{$data['recipient']}");
-
-
-        $token = $customer->createToken('auth_token')->plainTextToken;
-
-        return $this->success([
-            'token' => $token,
-            'customer' => $customer,
-        ], 'Customer registered successfully');
     }
 
     public function login(Request $request)
     {
-        $credentials = $request->only('phone', 'password');
+        try{
 
-        $validator = Validator::make($credentials, [
-            'phone' => 'required|exists:customers,phone',
-            'password' => 'required',
-        ]);
+            $credentials = $request->only('phone', 'password');
 
-        if ($validator->fails()) {
-            return $this->error($validator->errors(), 'Validation failed', 422);
+            $validator = Validator::make($credentials, [
+                'phone' => 'required|exists:customers,phone',
+                'password' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->respondValidationErrors($validator->errors()?->toArray());
+            }
+
+            $customer = Customer::where('phone', $credentials['phone'])
+                ->first();
+
+            if (!$customer || !Hash::check($credentials['password'], $customer->password)) {
+                return $this->respondError('Invalid phone or password', null, 401);
+            }
+
+
+            if (!$customer->is_active) {
+                return $this->respondError('Account is not active', null, 401);
+            }
+
+            $token = $customer->createToken('auth_token')->plainTextToken;
+
+            $customer = CustomerApiResource::make($customer);
+
+            return $this->respondValue([
+                'token' => $token,
+                'customer' => $customer,
+            ], 'Login successful');
         }
-
-        $customer = Customer::where('phone', $credentials['phone'])->first();
-
-        if (!$customer || !Hash::check($credentials['password'], $customer->password)) {
-            return $this->error([], 'Invalid phone or password', 401);
+        catch(\Exception $e){
+            logger()->error('Login error:', ['error' => $e->getMessage()]);
+            return $this->respondError();
         }
-
-        if (!$customer->is_active) {
-            return $this->error([], 'Account is not active', 403);
-        }
-
-        $token = $customer->createToken('auth_token')->plainTextToken;
-
-        return $this->success([
-            'token' => $token,
-            'customer' => $customer,
-        ], 'Login successful');
     }
 
     public function forgotPassword(Request $request)
