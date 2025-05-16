@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\API\AdvertisementsController;
 use App\Http\Controllers\API\CustomerAuthController;
 use App\Http\Controllers\API\CustomerProfileController;
 use Illuminate\Support\Facades\Route;
@@ -25,3 +26,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
+Route::get('/customers/ads', [AdvertisementsController::class, 'getAds']);
