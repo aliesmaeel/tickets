@@ -20,7 +20,7 @@ class EventApiResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'type' => $this->type,
+            // 'type' => $this->type,
             'image' => $this->image ?? asset('assets/images/default_event.jpg'),
             'address' => $this->address,
             'address_link' => $this->address_link,

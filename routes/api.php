@@ -9,11 +9,17 @@ use App\Http\Controllers\API\CustomerProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\EventController;
 
+use  App\Traits\ApiResponse;
+
 Route::fallback(function () {
-    return response()->json([
-        'success' => false,
-        'message' => 'Invalid API route.'
-    ], 404);
+    return response(
+        [
+            'success' => false,
+            'message' => 'API Not Found',
+            'data' => null,
+            'error_code' => 1,
+        ], 404
+    );
 });
 
 Route::get('/customers/ads', [AdvertisementsController::class, 'getAds']);
