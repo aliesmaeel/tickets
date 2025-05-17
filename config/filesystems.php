@@ -38,6 +38,13 @@ return [
             'report' => false,
         ],
 
+        'customers' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/customers'),
+            'url' => env('APP_URL') . '/storage/customers',
+            'visibility' => 'public',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

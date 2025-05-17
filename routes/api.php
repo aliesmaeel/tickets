@@ -1,10 +1,30 @@
 <?php
 
 
+use App\Http\Controllers\API\AdvertisementsController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\CityController;
 use App\Http\Controllers\API\CustomerAuthController;
 use App\Http\Controllers\API\CustomerProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\EventController;
+
+use  App\Traits\ApiResponse;
+
+Route::fallback(function () {
+    return response(
+        [
+            'success' => false,
+            'message' => 'API Not Found',
+            'data' => null,
+            'error_code' => 1,
+        ], 404
+    );
+});
+
+Route::get('/customers/ads', [AdvertisementsController::class, 'getAds']);
+
+
 
 
 Route::prefix('customers')->controller(CustomerAuthController::class)->group(function () {
@@ -18,10 +38,14 @@ Route::prefix('customers')->controller(CustomerAuthController::class)->group(fun
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customers/profile', [CustomerProfileController::class, 'getProfile']);
+    Route::post('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
+    Route::get('/customers/categories', [CategoryController::class, 'getCategories']);
+    Route::get('/customers/cities', [CityController::class, 'getCities']);
     Route::put('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
     Route::get('/events', [EventController::class, 'index']);
     Route::get('/events/{id}', [EventController::class, 'show']);
 
 
 });
+
 
