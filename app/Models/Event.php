@@ -32,6 +32,7 @@ class Event extends Model
         'display_end_date' => 'datetime',
         'description' => 'array',
         'name' => 'array',
+        'address' => 'array',
     ];
 
     public $translatable = ['description','name'];

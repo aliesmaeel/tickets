@@ -4,6 +4,7 @@
 use App\Http\Controllers\API\CustomerAuthController;
 use App\Http\Controllers\API\CustomerProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\EventController;
 
 
 Route::prefix('customers')->controller(CustomerAuthController::class)->group(function () {
@@ -18,5 +19,9 @@ Route::prefix('customers')->controller(CustomerAuthController::class)->group(fun
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customers/profile', [CustomerProfileController::class, 'getProfile']);
     Route::put('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
+    Route::get('/events', [EventController::class, 'index']);
+    Route::get('/events/{id}', [EventController::class, 'show']);
+
+
 });
 
