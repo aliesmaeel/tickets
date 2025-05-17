@@ -7,7 +7,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Validation\ValidationException;
-use Spatie\LaravelData\DataCollection;
 use Error;
 use Exception;
 trait ApiResponse
@@ -117,7 +116,7 @@ trait ApiResponse
         );
     }
 
-    protected function respondWithDataCollection(DataCollection $resourceCollection, $message = null, $statusCode = 200, $headers = [])
+    protected function respondWithDataCollection(Collection $resourceCollection, $message = null, $statusCode = 200, $headers = [])
     {
         return $this->apiResponse(
             [
