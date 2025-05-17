@@ -14,9 +14,16 @@ class CustomerProfileController extends Controller
 
     public function getProfile(Request $request)
     {
-        return $this->success([
-            'customer' => $request->user(),
-        ], 'Profile fetched successfully');
+        try {
+            $customer = $request->user();
+            if (!$customer) {
+                return $this->respondError('Customer not found', null, 404);
+            }
+            return $this->respondValue($customer, 'Profile retrieved successfully');
+        } catch (\Exception $e) {
+            logger()->error('Profile retrieval error:', ['error' => $e->getMessage()]);
+            return $this->respondError('Failed to retrieve profile', null, 500);
+        }
     }
 
     public function updateProfile(Request $request)
@@ -30,7 +37,7 @@ class CustomerProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->error($validator->errors(), 'Validation failed', 422);
+            return $this->respondValidationErrors($validator->errors()?->toArray());
         }
 
         $customer = $request->user();
@@ -50,13 +57,13 @@ class CustomerProfileController extends Controller
         if($request->hasFile('image')) {
             $file = $request->file('image');
             $path = $file->store('images', 'customers');
-            $customer->image = $path;
+            $customer->image = '/storage/customers/'.$path;
         }
 
         $customer->save();
 
-        return $this->success([
+        return $this->respondSuccess('Profile updated successfully', [
             'customer' => $customer,
-        ], 'Profile updated successfully');
+        ]);
     }
 }

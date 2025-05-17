@@ -11,28 +11,6 @@ use Error;
 use Exception;
 trait ApiResponse
 {
-//    protected function success($data = [], $message = 'Success', $code = 200)
-//    {
-//        return response()->json([
-//            'status'  => true,
-//            'message' => $message,
-//            'code'    => $code,
-//            'data'    => $data,
-//        ], $code);
-//    }
-//
-//    protected function error( $data = [] , $message = 'Error' , $code = 400)
-//    {
-//        return response()->json([
-//            'status'  => false,
-//            'message' => $message,
-//            'code'    => $code,
-//            'data'    => $data,
-//        ], $code);
-//    }
-
-
-
     protected function respondWithResource(JsonResource $resource, $message = null, $statusCode = 200, $headers = [])
     {
         return $this->apiResponse(
@@ -106,17 +84,6 @@ trait ApiResponse
     }
 
     protected function respondWithResourceCollection(ResourceCollection $resourceCollection, $message = null, $statusCode = 200, $headers = [])
-    {
-        return $this->apiResponse(
-            [
-                'success' => true,
-                'data' => $resourceCollection,
-                'message' => $message,
-            ], $statusCode, $headers
-        );
-    }
-
-    protected function respondWithDataCollection(Collection $resourceCollection, $message = null, $statusCode = 200, $headers = [])
     {
         return $this->apiResponse(
             [
