@@ -32,8 +32,7 @@ class CategoryResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->default(null)
-                    ])->locales(['en', 'ar']),
+                    ])->locales(['en', 'ar','kur']),
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(255)
@@ -56,7 +55,10 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        return $record->name['en'] ?? $record->name;
+                    }),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image'),

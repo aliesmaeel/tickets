@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('advertisements', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('description');
+            $table->string('title', 255);
+            $table->text('description');
             $table->string('link');
             $table->string('image')->nullable();
             $table->boolean('active')->default(false);

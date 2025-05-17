@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 class CityResource extends Resource
 {
@@ -23,10 +24,15 @@ class CityResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->unique(City::class, 'name', fn ($record) => $record)
-                    ->maxLength(255),
+                Translate::make()
+                    ->label('Name')
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->default(null)
+                    ])->locales(['en', 'ar','kur']),
             ]);
     }
 
@@ -35,7 +41,10 @@ class CityResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        return $record->name['en'] ?? $record->name;
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

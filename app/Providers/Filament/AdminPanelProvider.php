@@ -61,7 +61,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]) ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
-                FilamentTranslateFieldPlugin::make()->defaultLocales(['en', 'ar']),
+                FilamentTranslateFieldPlugin::make()->defaultLocales(['en', 'ar','kur']),
             ]);
     }
 }

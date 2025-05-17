@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 class AdvertisementResource extends Resource
 {
@@ -23,12 +24,24 @@ class AdvertisementResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('description')
-                    ->required()
-                    ->maxLength(255),
+                Translate::make()
+                    ->label('Title')
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->default(null)
+                    ])->locales(['en', 'ar','kur']),
+                Translate::make()
+                    ->label('Description')
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('description')
+                            ->required()
+                            ->maxLength(255)
+                            ->default(null)
+                    ])->locales(['en', 'ar','kur']),
                 Forms\Components\TextInput::make('link')
                     ->required()
                     ->maxLength(255),
@@ -44,9 +57,15 @@ class AdvertisementResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        return $record->title['en'] ?? $record->title;
+                    }),
                 Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
+                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        return $record->description['en'] ?? $record->description;
+                    }),
                 Tables\Columns\TextColumn::make('link')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image'),
