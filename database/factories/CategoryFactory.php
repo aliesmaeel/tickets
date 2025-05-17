@@ -17,7 +17,11 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'=> $this->faker->word(),
+            'name'=> [
+                'en' => $this->faker->word,
+                'ar' => $this->faker->word,
+                'kur' => $this->faker->word
+            ],
             'slug'=> $this->faker->slug(),
             'image'=> $this->faker->imageUrl(),
             'status'=> $this->faker->randomElement([true, false]),

@@ -33,21 +33,25 @@ class EventResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->default(null)
-                    ])->locales(['en', 'ar']),
+                    ])->locales(['en', 'ar','kur']),
 
                 Translate::make()
                     ->columnSpanFull()
-                    ->label('Description')
+                    ->label('Address')
                     ->schema([
-                    Forms\Components\Textarea::make('description')
+                    Forms\Components\Textarea::make('address')
                         ->maxLength(255)
                         ->default(null)
-                ])->locales(['en', 'ar']),
+                ])->locales(['en', 'ar','kur']),
 
-                Forms\Components\FileUpload::make('image')
-                    ->image(),
-                Forms\Components\Textarea::make('address')
-                    ->columnSpanFull(),
+                Translate::make()
+                    ->columnSpanFull()
+                    ->label('Address')
+                    ->schema([
+                        Forms\Components\Textarea::make('description')
+                            ->maxLength(255)
+                            ->default(null)
+                    ])->locales(['en', 'ar','kur']),
                 Forms\Components\TextInput::make('address_link')
                     ->maxLength(250)
                     ->default(null),
@@ -61,7 +65,8 @@ class EventResource extends Resource
                     ->required(),
                Forms\Components\Select::make('city_id')
                     ->relationship('city', 'name')
-                    ->required(),
+                    ->required()
+                   ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'] ?? $record->name),
                 Forms\Components\Select::make('category_id')
                     ->relationship('category', 'name')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'] ?? $record->name)
@@ -76,9 +81,16 @@ class EventResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        return $record->name['en'] ?? $record->name;
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
+                    ->searchable()
+                    ->getStateUsing(function ($record) {
+                        return $record->description['en'] ?? $record->description;
+                    }),
                 Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('address_link')
                     ->searchable(),
