@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerResource extends Resource
 {
@@ -33,8 +34,8 @@ class CustomerResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->maxLength(255)
-                    ->dehydrated(fn ($state) => filled($state)),
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
+
                 Forms\Components\FileUpload::make('image')
                     ->image(),
                 Forms\Components\Toggle::make('is_active')

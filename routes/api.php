@@ -6,6 +6,7 @@ use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\CityController;
 use App\Http\Controllers\API\CustomerAuthController;
 use App\Http\Controllers\API\CustomerProfileController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\EventController;
 
@@ -44,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events/{id}', [EventController::class, 'show']);
 
     Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
+    Route::post('/orders', [OrderController::class, 'createOrder']);
 
 
 });

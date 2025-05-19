@@ -29,5 +29,6 @@ return [
     'customer_not_found' => 'Customer not found',
     'profile_updated_successfully' => 'Profile updated successfully',
     'event_not_found' => 'Event not found',
+    'some_seats_are_unavailable' => 'Some seats are unavailable',
 
 ];

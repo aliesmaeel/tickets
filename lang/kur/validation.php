@@ -5,6 +5,7 @@ return [
     'exists' => 'هەڵەیە :attribute ',
     'required' => 'پێویستە :attribute پڕبکرێت',
     'unique' => 'هەڵەیە :attribute پێشتر هەیە',
+    'in' => 'هەڵەیە :attribute نییە',
 
 
     /*

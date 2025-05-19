@@ -31,4 +31,10 @@ class EventSeat extends Model
         return $this->belongsTo(SeatClass::class);
     }
 
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_seat');
+    }
+
+
 }

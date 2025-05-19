@@ -202,5 +202,20 @@ trait ApiResponse
         );
     }
 
+    protected function respondErrorWithData(
+        array $data = [],
+        $message = null,
+        int $statusCode = 400,
+    ): JsonResponse
+    {
+        return $this->apiResponse(
+            [
+                'success' => false,
+                'message' => $message ?? 'There was an internal error, Pls try again later',
+                'data' => $data,
+            ], $statusCode
+        );
+    }
+
 
 }

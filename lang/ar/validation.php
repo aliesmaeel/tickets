@@ -2,9 +2,10 @@
 
 return [
 
-    'exists' => 'غير صحيح :attribute ',
+    'exists' => 'غير موجود :attribute ',
     'required' => 'حقل :attribute مطلوب',
     'unique' => 'حقل :attribute موجود مسبقاً',
+    'in' => 'حقل :attribute غير موجود',
 
     'custom' => [
         'attribute-name' => [

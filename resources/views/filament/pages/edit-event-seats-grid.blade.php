@@ -301,7 +301,7 @@
             }).then(() => {
                 showToast('Seat layout saved successfully!', 'success');
                 setTimeout(() => {
-                    window.location.href = 'edit-event-seats-grid?event_id=' + eventId;
+                    window.location.reload();
                 }, 500);
             }).catch(() => {
                 showToast('Failed to save layout.', 'error');

@@ -61,29 +61,53 @@ class SeatController extends Controller
         ]);
     }
 
+    public function getSeatFromSeatClassId($seatClassId)
+    {
+        $seatClass = SeatClass::find($seatClassId);
+        return $seatClass ? $this->getSeatStatus($seatClass->name) : null;
+    }
     public function update(Request $request)
     {
-
         $validated = $request->validate([
             'event_id' => 'required|exists:events,id',
-            'data.seats' => 'required|array',
+            'data.seats' => 'array',
         ]);
 
-        foreach ($validated['data']['seats'] as $seatData) {
+        $eventId = $validated['event_id'];
+        $submittedSeats = collect($validated['data']['seats']);
+
+
+        foreach ($submittedSeats as $seatData) {
             EventSeat::updateOrCreate(
                 [
-                    'event_id' => $validated['event_id'],
+                    'event_id' => $eventId,
                     'row' => $seatData['row'],
                     'col' => $seatData['col'],
+
                 ],
                 [
                     'seat_class_id' => $seatData['seat_class_id'],
+                    'status' => $this->getSeatFromSeatClassId($seatData['seat_class_id']),
                 ]
             );
         }
 
+        $submittedKeys = $submittedSeats->map(function ($seat) {
+            return $seat['row'] . '-' . $seat['col'];
+        });
+
+        EventSeat::where('event_id', $eventId)
+            ->get()
+            ->each(function ($seat) use ($submittedKeys) {
+                $key = $seat->row . '-' . $seat->col;
+                if (!$submittedKeys->contains($key)) {
+                    $seat->delete();
+                }
+            });
+
         return response()->json(['success' => true]);
     }
+
 
     public function getEventSeats($id)
     {
