@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Traits\MultiLanguageTrait;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,27 +10,27 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class AdvertisementFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+
     public function definition(): array
     {
+        $fakerEn = \Faker\Factory::create('en_US');
+        $fakerAr = \Faker\Factory::create('ar_SA');
+        $fakerKur = \Faker\Factory::create('fa_IR');
+
         return [
             'title' => [
-                'en' => $this->faker->sentence,
-                'ar' => $this->faker->sentence,
-                'kur'=> $this->faker->sentence,
+                'en' => $fakerEn->city,
+                'ar' => $fakerAr->city,
+                'kur' => $fakerKur->city,
             ],
             'description' => [
-                'en' => $this->faker->paragraph,
-                'ar' => $this->faker->paragraph,
-                'kur'=> $this->faker->paragraph,
+                'en' => $fakerEn->text,
+                'ar' => $fakerAr->city.$fakerAr->city.$fakerAr->city.$fakerAr->city,
+                'kur' => $fakerKur->city.$fakerKur->city.$fakerKur->city.$fakerKur->city,
             ],
-            'image' => $this->faker->imageUrl(),
+            'image' => $fakerEn->imageUrl(640, 480, 'cats'),
+            'link' => $fakerEn->url,
             'active' => $this->faker->randomElement([true, false]),
-            'link' => $this->faker->url,
         ];
     }
 }

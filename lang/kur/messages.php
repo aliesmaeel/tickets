@@ -1,0 +1,33 @@
+<?php
+
+
+return [
+    'login_successful' => 'چوونەژوورەوە سەرکەوتوو بوو',
+    'invalid_phone_or_password' => 'ژمارەی مۆبایل یان تێپەڕەوشە نادروستە',
+    'account_not_active' => 'حسابەکە چالاک نییە',
+    'customer_registered_successfully' => 'مشتەریەکە بە سەرکەوتوویی تۆمار کرا',
+    'customer_profile_updated_successfully' => 'پروفایلی مشتەرەکە بە سەرکەوتوویی نوێکرا',
+    'otp_sent_successfully_to_phone' => 'OTP بە سەرکەوتوویی بۆ مۆبایل ناردرا',
+    'failed_to_send_otp' => 'ناردنی OTP سەرکەوتوو نەبوو',
+    'opt_is_invalid_please_try_again' => 'OTP نادروستە، تکایە دوبارە هەوڵ بدە',
+    'no_registration_data_found' => 'داتا بەرەوپێش تۆمارکردن نەدۆزرابوو',
+    'password_reset_successfully' => 'تێپەڕەوشە بە سەرکەوتوویی نوێکراوە',
+    'cities_retrieved_successfully' => 'شارەکان بە سەرکەوتوویی وەرگرتن',
+    'categories_retrieved_successfully' => 'پۆلەکان بە سەرکەوتوویی وەرگرتن',
+    'profile_retrieved_successfully' => 'پروفایل بە سەرکەوتوویی وەرگرتن',
+    'failed_to_retrieve_profile' => 'وەرگرتنی پروفایل سەرکەوتوو نەبوو',
+    'failed_to_update_profile' => 'نوێکردنەوەی پروفایل سەرکەوتوو نەبوو',
+    'failed_to_retrieve_categories' => 'وەرگرتنی پۆلەکان سەرکەوتوو نەبوو',
+    'failed_to_retrieve_cities' => 'وەرگرتنی شارەکان سەرکەوتوو نەبوو',
+    'failed_to_retrieve_events' => 'وەرگرتنی ڕووداوەکان سەرکەوتوو نەبوو',
+    'failed_to_retrieve_event' => 'وەرگرتنی ڕووداوەکە سەرکەوتوو نەبوو',
+    'failed_to_retrieve_event_seats' => 'وەرگرتنی کەسەکان سەرکەوتوو نەبوو',
+    'event_seats_retrieved_successfully' => 'کەسەکان بە سەرکەوتوویی وەرگرتن',
+    'event_retrieved_successfully' => 'ڕووداوەکە بە سەرکەوتوویی وەرگرتن',
+    'events_retrieved_successfully' => 'ڕووداوەکان بە سەرکەوتوویی وەرگرتن',
+    'failed_to_retrieve_ads' => 'وەرگرتنی ئیشکراوەکان سەرکەوتوو نەبوو',
+    'ads_retrieved_successfully' => 'ئیشکراوەکان بە سەرکەوتوویی وەرگرتن',
+    'customer_not_found' => 'مشتەریەکە نەدۆزرابوو',
+    'profile_updated_successfully' => 'پروفایل بە سەرکەوتوویی نوێکرا',
+    'event_not_found' => 'ڕووداوەکە نەدۆزرابوو',
+];

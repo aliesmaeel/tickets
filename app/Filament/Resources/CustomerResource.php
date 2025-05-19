@@ -33,16 +33,19 @@ class CustomerResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->dehydrated(fn ($state) => filled($state)),
                 Forms\Components\FileUpload::make('image')
                     ->image(),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
-                Forms\Components\TextInput::make('lang')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('en'),
+                Forms\Components\Select::make('lang')
+                    ->options([
+                        'ar' => 'Arabic',
+                        'en' => 'English',
+                        'kur' => 'Kurdish',
+                    ])
+                    ->required(),
             ]);
     }
 

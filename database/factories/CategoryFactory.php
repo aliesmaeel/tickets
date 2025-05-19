@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Traits\MultiLanguageTrait;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,22 +10,21 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CategoryFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $fakerEn = \Faker\Factory::create('en_US');
+        $fakerAr = \Faker\Factory::create('ar_SA');
+        $fakerKur = \Faker\Factory::create('fa_IR');
+
         return [
-            'name'=> [
-                'en' => $this->faker->word,
-                'ar' => $this->faker->word,
-                'kur' => $this->faker->word
+            'name' => [
+                'en' => $fakerEn->city,
+                'ar' => $fakerAr->city,
+                'kur' => $fakerKur->city,
             ],
-            'slug'=> $this->faker->slug(),
-            'image'=> $this->faker->imageUrl(),
-            'status'=> $this->faker->randomElement([true, false]),
+            'slug'=>$fakerEn->slug(3),
+            'image' => $this->faker->imageUrl(640, 480, 'cats'),
+            'status' => $this->faker->randomElement([true, false]),
         ];
     }
 }
