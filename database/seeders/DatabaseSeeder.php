@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Advertisement;
 use App\Models\Category;
 use App\Models\City;
+use App\Models\Customer;
 use App\Models\SeatClass;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -90,6 +91,9 @@ class DatabaseSeeder extends Seeder
 
         SeatClass::factory()->count(3)->create();
         Advertisement::factory()->count(5)->create();
+
+        Customer::factory()->count(1)->create();
+
 
     }
 }

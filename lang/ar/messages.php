@@ -30,6 +30,7 @@ return [
     'customer_not_found' => 'العميل غير موجود',
     'profile_updated_successfully' => 'تم تحديث الملف الشخصي بنجاح',
     'event_not_found' => 'الحدث غير موجود',
+    'some_seats_are_unavailable' => 'بعض المقاعد غير متاحة',
 
 
 ];

@@ -30,4 +30,5 @@ return [
     'customer_not_found' => 'مشتەریەکە نەدۆزرابوو',
     'profile_updated_successfully' => 'پروفایل بە سەرکەوتوویی نوێکرا',
     'event_not_found' => 'ڕووداوەکە نەدۆزرابوو',
+    'some_seats_are_unavailable' => 'هەندێ کەس نادروستە',
 ];

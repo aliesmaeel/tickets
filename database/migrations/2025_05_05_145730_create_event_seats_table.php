@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('seat_class_id')->constrained()->onDelete('cascade');
             $table->string('row',5);
             $table->string('col',5);
-            $table->string('status', 10)->default('available'); // available, blocked
+            $table->string('status', 10)->default('available');
             $table->timestamps();
         });
     }
