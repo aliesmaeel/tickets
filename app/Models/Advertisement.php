@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasLocalizedAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Concerns\Package\HasTranslations;
@@ -9,7 +10,7 @@ use Spatie\LaravelPackageTools\Concerns\Package\HasTranslations;
 class Advertisement extends Model
 {
 
-    use HasTranslations,HasFactory;
+    use HasTranslations,HasFactory ,HasLocalizedAttributes;
     protected $fillable = [
         'title',
         'description',
@@ -18,6 +19,10 @@ class Advertisement extends Model
         'active',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
     public $translatable = [
         'title',
         'description',
@@ -26,4 +31,5 @@ class Advertisement extends Model
         'title' => 'array',
         'description' => 'array',
     ];
+
 }

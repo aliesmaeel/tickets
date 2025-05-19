@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'login_successful' => 'Login successful',
+    'invalid_phone_or_password' => 'Invalid phone or password',
+    'account_not_active' => 'Account is not active',
+    'customer_registered_successfully' => 'Customer registered successfully',
+    'customer_profile_updated_successfully' => 'Customer profile updated successfully',
+    'otp_sent_successfully_to_phone' => 'OTP sent successfully to phone',
+    'failed_to_send_otp' => 'Failed to send OTP',
+    'opt_is_invalid_please_try_again' => 'OTP is invalid, please try again',
+    'no_registration_data_found' => 'No registration data found',
+    'password_reset_successfully' => 'Password reset successfully',
+    'cities_retrieved_successfully' => 'Cities retrieved successfully',
+    'categories_retrieved_successfully' => 'Categories retrieved successfully',
+    'profile_retrieved_successfully' => 'Profile retrieved successfully',
+    'failed_to_retrieve_profile' => 'Failed to retrieve profile',
+    'failed_to_update_profile' => 'Failed to update profile',
+    'failed_to_retrieve_categories' => 'Failed to retrieve categories',
+    'failed_to_retrieve_cities' => 'Failed to retrieve cities',
+    'failed_to_retrieve_events' => 'Failed to retrieve events',
+    'failed_to_retrieve_event' => 'Failed to retrieve event',
+    'failed_to_retrieve_event_seats' => 'Failed to retrieve event seats',
+    'event_seats_retrieved_successfully' => 'Event seats retrieved successfully',
+    'event_retrieved_successfully' => 'Event retrieved successfully',
+    'events_retrieved_successfully' => 'Events retrieved successfully',
+    'failed_to_retrieve_ads' => 'Failed to retrieve ads',
+    'ads_retrieved_successfully' => 'Ads retrieved successfully',
+    'customer_not_found' => 'Customer not found',
+    'profile_updated_successfully' => 'Profile updated successfully',
+    'event_not_found' => 'Event not found',
+
+];

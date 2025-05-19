@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasLocalizedAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Concerns\Package\HasTranslations;
 
 class Event extends Model
 {
-    use HasTranslations;
+    use HasTranslations,HasLocalizedAttributes;
 
 
 
@@ -46,8 +47,16 @@ class Event extends Model
         return $this->belongsTo(City::class);
     }
 
+    // Event.php
+
+    public function seatClasses()
+    {
+        return $this->hasMany(SeatClass::class);
+    }
+
     public function seats()
     {
         return $this->hasMany(EventSeat::class);
     }
+
 }

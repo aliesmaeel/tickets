@@ -22,9 +22,7 @@ Route::fallback(function () {
     );
 });
 
-Route::get('/customers/ads', [AdvertisementsController::class, 'getAds']);
-
-
+Route::post('/customers/ads', [AdvertisementsController::class, 'getAds']);
 
 
 Route::prefix('customers')->controller(CustomerAuthController::class)->group(function () {
@@ -44,6 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
     Route::get('/events', [EventController::class, 'index']);
     Route::get('/events/{id}', [EventController::class, 'show']);
+
+    Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
 
 
 });

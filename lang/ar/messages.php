@@ -1,0 +1,35 @@
+<?php
+
+
+return [
+    'login_successful' => 'تسجيل الدخول بنجاح',
+    'invalid_phone_or_password' => 'رقم الهاتف أو كلمة المرور غير صحيحة',
+    'account_not_active' => 'الحساب غير نشط',
+    'customer_registered_successfully' => 'تم تسجيل العميل بنجاح',
+    'customer_profile_updated_successfully' => 'تم تحديث ملف العميل بنجاح',
+    'otp_sent_successfully_to_phone' => 'تم إرسال OTP بنجاح إلى الهاتف',
+    'failed_to_send_otp' => 'فشل في إرسال OTP',
+    'opt_is_invalid_please_try_again' => 'OTP غير صالح، يرجى المحاولة مرة أخرى',
+    'no_registration_data_found' => 'لا توجد بيانات تسجيل',
+    'password_reset_successfully' => 'تم إعادة تعيين كلمة المرور بنجاح',
+    'cities_retrieved_successfully' => 'تم استرجاع المدن بنجاح',
+    'categories_retrieved_successfully' => 'تم استرجاع الفئات بنجاح',
+    'profile_retrieved_successfully' => 'تم استرجاع الملف الشخصي بنجاح',
+    'failed_to_retrieve_profile' => 'فشل في استرجاع الملف الشخصي',
+    'failed_to_update_profile' => 'فشل في تحديث الملف الشخصي',
+    'failed_to_retrieve_categories' => 'فشل في استرجاع الفئات',
+    'failed_to_retrieve_cities' => 'فشل في استرجاع المدن',
+    'failed_to_retrieve_events' => 'فشل في استرجاع الأحداث',
+    'failed_to_retrieve_event' => 'فشل في استرجاع الحدث',
+    'failed_to_retrieve_event_seats' => 'فشل في استرجاع مقاعد الحدث',
+    'event_seats_retrieved_successfully' => 'تم استرجاع مقاعد الحدث بنجاح',
+    'event_retrieved_successfully' => 'تم استرجاع الحدث بنجاح',
+    'events_retrieved_successfully' => 'تم استرجاع الأحداث بنجاح',
+    'failed_to_retrieve_ads' => 'فشل في استرجاع الإعلانات',
+    'ads_retrieved_successfully' => 'تم استرجاع الإعلانات بنجاح',
+    'customer_not_found' => 'العميل غير موجود',
+    'profile_updated_successfully' => 'تم تحديث الملف الشخصي بنجاح',
+    'event_not_found' => 'الحدث غير موجود',
+
+
+];

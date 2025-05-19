@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Services\OtpService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,6 +25,8 @@ class CustomerAuthController extends Controller
 
     public function registerRequest(Request $request)
     {
+        App::setLocale($request->lang ?? 'en');
+
         try {
 
             $data = $request->only('phone', 'password', 'name', 'lang');
@@ -44,10 +47,13 @@ class CustomerAuthController extends Controller
                $cached = cache("otp:{$data['phone']}");
                logger()->info('OTP cache data:', ['otp' => $cached]);
 
-               return $this->respondSuccess('OTP has sent to your phone successfully');
+               return $this->respondValue(
+                   null,
+                   __('messages.otp_sent_successfully_to_phone')
+               );
            }
 
-           return $this->respondError('Failed to send OTP', null, 500);
+           return $this->respondError(__('messages.failed_to_send_otp'), null, 401);
 
         }catch (\Exception $e){
             logger()->error('Register error:', ['error' => $e->getMessage()]);
@@ -57,6 +63,7 @@ class CustomerAuthController extends Controller
 
     public function registerVerify(Request $request)
     {
+            App::setLocale($request->lang ?? 'en');
 
             $data = $request->only('recipient', 'code');
 
@@ -70,13 +77,13 @@ class CustomerAuthController extends Controller
             }
 
             if (!$this->otpService->verify($data['recipient'], $data['code'])) {
-                return $this->respondError('The OTP provided is invalid. Please try again.', null, 401);
+                return $this->respondError(__('messages.opt_is_invalid_please_try_again'), null, 401);
             }
 
             $cached=cache("register:{$data['recipient']}");
 
             if (!$cached || !isset($cached['password'])) {
-                return $this->respondError('No registration data found', null, 400);
+                return $this->respondError(__('messages.no_registration_data_found'), null, 401);
             }
 
             $customer = Customer::create([
@@ -98,13 +105,15 @@ class CustomerAuthController extends Controller
             return $this->respondValue([
                 'token' => $token,
                 'customer' => $customer,
-            ], 'Customer registered successfully');
+            ], __('messages.customer_registered_successfully'));
 
 
     }
 
     public function login(Request $request)
     {
+        App::setLocale($request->lang ?? 'en');
+
         try{
 
             $credentials = $request->only('phone', 'password');
@@ -122,12 +131,12 @@ class CustomerAuthController extends Controller
                 ->first();
 
             if (!$customer || !Hash::check($credentials['password'], $customer->password)) {
-                return $this->respondError('Invalid phone or password', null, 401);
+                return $this->respondError(__('messages.invalid_phone_or_password'), null, 401);
             }
 
 
             if (!$customer->is_active) {
-                return $this->respondError('Account is not active', null, 401);
+                return $this->respondError(__('messages.account_not_active'), null, 401);
             }
 
             $token = $customer->createToken('auth_token')->plainTextToken;
@@ -137,7 +146,7 @@ class CustomerAuthController extends Controller
             return $this->respondValue([
                 'token' => $token,
                 'customer' => $customer,
-            ], 'Login successful');
+            ], __('messages.login_successful'));
         }
         catch(\Exception $e){
             logger()->error('Login error:', ['error' => $e->getMessage()]);
@@ -147,6 +156,8 @@ class CustomerAuthController extends Controller
 
     public function forgotPassword(Request $request)
     {
+        App::setLocale($request->lang ?? 'en');
+
         $validator = Validator::make($request->only('phone','lang'), [
             'phone' => 'required|exists:customers,phone'
         ]);
@@ -158,12 +169,14 @@ class CustomerAuthController extends Controller
         $this->otpService->send($request->phone,$request->lang);
         return $this->respondValue(
             null,
-            'OTP has sent to your phone successfully'
+            __('messages.otp_sent_successfully_to_phone')
         );
     }
 
     public function resetPassword(Request $request)
     {
+        App::setLocale($request->lang ?? 'en');
+
         $data = $request->only('phone', 'otp', 'password', 'password_confirmation');
 
         $validator = Validator::make($data, [
@@ -177,7 +190,7 @@ class CustomerAuthController extends Controller
         }
 
         if (!$this->otpService->verify($data['phone'], $data['otp'])) {
-            return $this->respondError('The OTP provided is invalid. Please try again.', null, 401);
+            return $this->respondError( __('messages.opt_is_invalid_please_try_again'), null, 401);
         }
 
         $customer = Customer::where('phone', $data['phone'])->first();
@@ -187,7 +200,7 @@ class CustomerAuthController extends Controller
 
         return $this->respondValue(
             null,
-            'Password reset successfully'
+            __('messages.password_reset_successfully')
         );
     }
 }

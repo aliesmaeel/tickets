@@ -4,9 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\EventApiResource;
+use App\Http\Resources\Api\EventSeatsResource;
 use App\Models\Event;
+use App\Models\EventSeat;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
@@ -22,7 +26,7 @@ class EventController extends Controller
         $city_id = $request->input('city_id') ?? null;
         $start_date = $request->input('start_date') ?? null;
         $end_date = $request->input('end_date') ?? null;
-
+        App::setLocale(Auth::user('customer')->lang);
         // make validation on inputs
         $validator = Validator::make($request->all(), [
             'page' => 'integer|min:1',
@@ -59,7 +63,8 @@ class EventController extends Controller
                     $query->whereDate('end_time', '<=', $end_date);
                 })
                 ->whereDate('display_start_date', '<=', now())
-                ->whereDate('display_end_date', '>=', now())                ->where('active', 1)
+                ->whereDate('display_end_date', '>=', now())
+                ->where('active', 1)
 
                 ->orderBy('id', 'desc')
                 ->paginate($limit, ['*'], 'page', $page);
@@ -76,7 +81,7 @@ class EventController extends Controller
                 ]
             ];
 
-            return $this->respondValue($eventsResource, 'Events fetched successfully');
+            return $this->respondValue($eventsResource, __('messages.events_retrieved_successfully'));
         } catch (\Exception $e) {
             return $this->respondError();
         }
@@ -85,21 +90,40 @@ class EventController extends Controller
     public function show($id)
     {
         try {
+
+            App::setLocale(Auth::user('customer')->lang);
+
             $event = Event::with(['category', 'city'])
                 ->where('id', $id)
                 ->where('active', 1)
                 ->first();
 
             if (!$event) {
-                return $this->respondNotFound('Event not found');
+                return $this->respondNotFound(__('messages.event_not_found'));
             }
 
             $eventResource = EventApiResource::make($event)->resolve();
 
-            return $this->respondValue($eventResource, 'Event fetched successfully');
+            return $this->respondValue($eventResource, __('messages.event_retrieved_successfully'));
 
         } catch (\Exception $e) {
             return $this->respondError();
         }
     }
+
+    public function getEventSeats($id)
+    {
+       App::setLocale(Auth::user('customer')->lang);
+
+        try {
+            $event = Event::with(['seatClasses', 'seats'])->where('id', $id)->where('active', 1)->firstOrFail();
+            $eventResource= new EventSeatsResource($event);
+
+            return $this->respondValue($eventResource, __('messages.event_seats_retrieved_successfully'));
+
+        } catch (\Exception $e) {
+            return $this->respondError(__('messages.failed_to_retrieve_event_seats'));
+        }
+    }
+
 }

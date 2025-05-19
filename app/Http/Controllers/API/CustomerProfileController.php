@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,12 +18,15 @@ class CustomerProfileController extends Controller
         try {
             $customer = $request->user();
             if (!$customer) {
-                return $this->respondError('Customer not found', null, 404);
+                return $this->respondError(__('messages.customer_not_found'), null, 404);
             }
-            return $this->respondValue($customer, 'Profile retrieved successfully');
+
+            App::setLocale($customer->lang);
+            return $this->respondValue($customer, __('messages.profile_retrieved_successfully'));
+
         } catch (\Exception $e) {
             logger()->error('Profile retrieval error:', ['error' => $e->getMessage()]);
-            return $this->respondError('Failed to retrieve profile', null, 500);
+            return $this->respondError(__('messages.failed_to_retrieve_profile'), null, 500);
         }
     }
 
@@ -49,6 +53,7 @@ class CustomerProfileController extends Controller
         if (isset($data['lang'])) {
             $customer->lang = $data['lang'];
         }
+        App::setLocale($customer->lang);
 
         if (isset($data['password'])) {
             $customer->password = Hash::make($data['password']);
@@ -62,7 +67,7 @@ class CustomerProfileController extends Controller
 
         $customer->save();
 
-        return $this->respondSuccess('Profile updated successfully', [
+        return $this->respondValue(__('messages.profile_updated_successfully'), [
             'customer' => $customer,
         ]);
     }

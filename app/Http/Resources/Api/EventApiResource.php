@@ -18,20 +18,18 @@ class EventApiResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
+            'name' => $this->name_localized,
+            'description' => $this->description_localized,
             // 'type' => $this->type,
             'image' => $this->image ?? asset('assets/images/default_event.jpg'),
-            'address' => $this->address,
+            'address' => $this->address_localized,
             'address_link' => $this->address_link,
             'start_date' => Carbon::parse($this->start_time)->format('Y-m-d H:i:s'),
             'end_date' => Carbon::parse($this->end_time)->format('Y-m-d H:i:s'),
             'display_start_date' => Carbon::parse($this->display_start_date)->format('Y-m-d H:i:s'),
             'display_end_date' => Carbon::parse($this->display_end_date)->format('Y-m-d H:i:s'),
-            'city_id' => $this->city_id,
-            'category_id' => $this->category_id,
-            'city_name' => $this->city?->name,
-            'category_name' => $this->category?->name,
+            'city' => new CityResource($this->city),
+            'category' => new CategoryResource($this->category),
         ];
     }
 }

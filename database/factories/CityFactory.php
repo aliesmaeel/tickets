@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Traits\MultiLanguageTrait;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,19 +10,20 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CityFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+
+        $fakerEn = \Faker\Factory::create('en_US');
+        $fakerAr = \Faker\Factory::create('ar_SA');
+        $fakerKur = \Faker\Factory::create('fa_IR');
+
         return [
             'name' => [
-                'en' => $this->faker->city,
-                'ar' => $this->faker->city,
-                'kur' => $this->faker->city,
+                'en' => $fakerEn->city,
+                'ar' => $fakerAr->city,
+                'kur' => $fakerKur->city,
             ],
         ];
     }
+
 }
