@@ -6,6 +6,7 @@ use App\Models\Advertisement;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Customer;
+use App\Models\EventSeat;
 use App\Models\SeatClass;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -89,9 +90,12 @@ class DatabaseSeeder extends Seeder
             'city_id' => 2,
         ]);
 
-        SeatClass::factory()->count(6)->create();
         Advertisement::factory()->count(5)->create();
         Customer::factory()->count(1)->create();
+        $this->call([
+            SeatClassSeeder::class,
+            EventSeatSeeder::class,
+        ]);
 
     }
 }
