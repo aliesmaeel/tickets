@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 
 class SeatClassResource extends Resource
@@ -61,12 +62,15 @@ class SeatClassResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\ColorColumn::make('color'),
                 Tables\Columns\TextColumn::make('price')
                     ->money()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('event.name.en')
                     ->label('Event'),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -80,6 +84,9 @@ class SeatClassResource extends Resource
                 Tables\Filters\SelectFilter::make('name')
                     ->label('Seat Class Name')
                     ->options(fn () => \App\Models\SeatClass::query()
+                        ->where('name', '!=', 'reserved')
+                        ->where('name', '!=', 'empty')
+                        ->where('name', '!=', 'stage')
                         ->select('name')
                         ->distinct()
                         ->pluck('name', 'name')
@@ -95,11 +102,10 @@ class SeatClassResource extends Resource
 
 
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->disabled(fn (SeatClass $record): bool => in_array($record->name, ['reserved', 'empty', 'stage'])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -123,6 +129,21 @@ class SeatClassResource extends Resource
     public static function getNavigationLabel(): string
     {
         return __('Seat Events Classes');
+    }
+
+   public static function canEdit(Model $record): bool
+   {
+       return parent::canEdit($record) && !in_array($record->name, ['reserved', 'empty', 'stage']);
+   }
+    public static function canDelete(Model $record): bool
+    {
+         return parent::canDelete($record) && !in_array($record->name, ['reserved', 'empty', 'stage']);
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereNotIn('name', ['reserved', 'empty', 'stage']);
     }
 
 }
