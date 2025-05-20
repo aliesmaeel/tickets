@@ -9,19 +9,23 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class SeatClassFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $arr = ['empty','stage','reserved','Class A', 'Class B', 'Class C'];
 
-    protected $arr = ['Class A', 'Class B', 'Class C'];
     public function definition(): array
     {
+        $name = array_pop($this->arr);
+
+        $color = match ($name) {
+            'empty' => '#000000',
+            'reserved' => '#FFFF00',
+            'stage' => '#808080',
+            default => $this->faker->hexColor(),
+        };
+
         return [
-            'name' => array_pop($this->arr),
+            'name' => $name,
             'price' => $this->faker->randomFloat(2, 10, 100),
-            'color' => $this->faker->hexColor(),
+            'color' => $color,
             'event_id' => 1,
         ];
     }
