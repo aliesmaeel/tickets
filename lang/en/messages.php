@@ -30,5 +30,8 @@ return [
     'profile_updated_successfully' => 'Profile updated successfully',
     'event_not_found' => 'Event not found',
     'some_seats_are_unavailable' => 'Some seats are unavailable',
+    'order_created_successfully' => 'Order created successfully',
+    'some_seats_already_reserved' => 'Some seats are already reserved',
+    'order_creation_failed' => 'Order creation failed',
 
 ];

@@ -31,4 +31,7 @@ return [
     'profile_updated_successfully' => 'پروفایل بە سەرکەوتوویی نوێکرا',
     'event_not_found' => 'ڕووداوەکە نەدۆزرابوو',
     'some_seats_are_unavailable' => 'هەندێ کەس نادروستە',
+    'order_created_successfully' => 'داواکاری بە سەرکەوتوویی دروست کرا',
+    'some_seats_already_reserved' => 'هەندێ کەس پێشتر پاراستراوە',
+    'order_creation_failed' => 'دروستکردنی داواکاری سەرکەوتوو نەبوو',
 ];

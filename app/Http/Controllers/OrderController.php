@@ -25,15 +25,11 @@ class OrderController extends Controller
             'seats.*.event_id' => 'required|integer|exists:events,id',
         ]);
 
-
-
-
         $customer = auth()->user();
-
         $groupedSeats = collect($request->seats)->groupBy('event_id');
 
         $createdOrders = [];
-        $reservedSeats = [];
+        $conflictingSeats = [];
 
         DB::beginTransaction();
 
@@ -41,20 +37,25 @@ class OrderController extends Controller
             foreach ($groupedSeats as $eventId => $seatsGroup) {
                 $seatIds = collect($seatsGroup)->pluck('id');
 
-                $seats = EventSeat::whereIn('id', $seatIds)
+                $lockedSeats = EventSeat::whereIn('id', $seatIds)
                     ->where('event_id', $eventId)
                     ->with('seatClass')
                     ->lockForUpdate()
                     ->get();
 
-                $alreadyReserved = $seats->filter(fn($seat) => strtolower($seat->status) !== 'available');
+                $alreadyReservedSeats = $lockedSeats->filter(
+                    fn($seat) => strtolower($seat->status) !== 'available'
+                );
 
-                if ($alreadyReserved->isNotEmpty()) {
-                    $reservedSeats = array_merge($reservedSeats, $alreadyReserved->pluck('id')->toArray());
+                if ($alreadyReservedSeats->isNotEmpty()) {
+                    $conflictingSeats = array_merge(
+                        $conflictingSeats,
+                        $alreadyReservedSeats->pluck('id')->toArray()
+                    );
                     continue;
                 }
 
-                $totalPrice = $seats->sum(fn($seat) => $seat->Seatclass->price ?? 0);
+                $totalPrice = $lockedSeats->sum(fn($seat) => $seat->seatClass->price ?? 0);
                 $totalPrice = number_format($totalPrice, 2, '.', '');
 
                 $order = Order::create([
@@ -65,19 +66,16 @@ class OrderController extends Controller
 
                 $order->seats()->attach($seatIds);
 
-                EventSeat::whereIn('id', $seatIds)->update(
-                    [
-                        'status' => 'Reserved',
-                        'seat_class_id' => $this->getReservedSeatClassId($eventId),
-
-                    ]
-                );
+                EventSeat::whereIn('id', $seatIds)->update([
+                    'status' => 'Reserved',
+                    'seat_class_id' => $this->getReservedSeatClassId($eventId),
+                ]);
 
                 $createdOrders[] = [
                     'order_id' => $order->id,
                     'event_id' => $eventId,
                     'total_price' => $totalPrice,
-                    'seat_ids' => $seatIds,
+                    'booked_seat_ids' => $seatIds,
                 ];
             }
 
@@ -86,11 +84,11 @@ class OrderController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => count($createdOrders) > 0
-                    ? 'Orders processed successfully.'
-                    : 'No orders were created.',
+                    ? __('messages.order_created_successfully')
+                    : __('messages.some_seats_already_reserved'),
                 'data' => [
                     'created_orders' => $createdOrders,
-                    'reserved_seats' => $reservedSeats,
+                    'conflicting_seat_ids' => $conflictingSeats,
                 ]
             ]);
 
@@ -100,22 +98,21 @@ class OrderController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create orders.',
+                'message' => __('messages.order_creation_failed'),
                 'data' => [
                     'created_orders' => $createdOrders,
-                    'reserved_seats' => $reservedSeats,
-                    'error' => $e->getMessage(), // optional for debugging
+                    'conflicting_seat_ids' => $conflictingSeats,
+                    'error' => $e->getMessage(),
                 ],
             ], 500);
         }
     }
 
 
+
     public function getReservedSeatClassId($eventId)
     {
-        $event = Event::findOrFail($eventId);
         $seatClass = SeatClass::where('event_id', $eventId)->where('name', 'reserved')->first();
-
         return $seatClass ? $seatClass->id : null;
     }
 

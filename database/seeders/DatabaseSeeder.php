@@ -89,11 +89,9 @@ class DatabaseSeeder extends Seeder
             'city_id' => 2,
         ]);
 
-        SeatClass::factory()->count(3)->create();
+        SeatClass::factory()->count(6)->create();
         Advertisement::factory()->count(5)->create();
-
         Customer::factory()->count(1)->create();
-
 
     }
 }

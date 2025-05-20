@@ -31,6 +31,9 @@ return [
     'profile_updated_successfully' => 'تم تحديث الملف الشخصي بنجاح',
     'event_not_found' => 'الحدث غير موجود',
     'some_seats_are_unavailable' => 'بعض المقاعد غير متاحة',
+    'order_created_successfully' => 'تم إنشاء الطلب بنجاح',
+    'some_seats_already_reserved' => 'بعض المقاعد محجوزة بالفعل',
+    'order_creation_failed' => 'فشل في إنشاء الطلب',
 
 
 ];
