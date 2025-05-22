@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\EventSeat;
 use App\Models\Order;
 use App\Models\SeatClass;
+use App\Models\Setting;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -57,12 +58,18 @@ class OrderController extends Controller
 
                 $totalPrice = $lockedSeats->sum(fn($seat) => $seat->seatClass->price ?? 0);
                 $totalPrice = number_format($totalPrice, 2, '.', '');
+                $rate = Setting::getRate('point_to_money_rate');
 
                 $order = Order::create([
                     'customer_id' => $customer->id,
                     'event_id' => $eventId,
                     'total_price' => $totalPrice,
+                    'point_conversion_rate' => $rate,
                 ]);
+
+                $pointsEarned = $order->total_price / $rate;
+
+                $customer->wallet->increment('points', (int) $pointsEarned);
 
                 $order->seats()->attach($seatIds);
 
@@ -89,6 +96,7 @@ class OrderController extends Controller
                 'data' => [
                     'created_orders' => $createdOrders,
                     'conflicting_seat_ids' => $conflictingSeats,
+                    'wallet_points' => $customer->wallet->points,
                 ]
             ]);
 

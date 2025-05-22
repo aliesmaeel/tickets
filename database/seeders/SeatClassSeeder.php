@@ -30,7 +30,7 @@ class SeatClassSeeder extends Seeder
                     'event_id' => $eventId,
                     'name' => $name,
                     'color' => $defaultColors[$name] ?? fake()->hexColor(),
-                    'price' => fake()->randomFloat(2, 10, 100),
+                    'price' => in_array($name,['empty','reserved','stage']) ? 0 : fake()->randomNumber(2, 10, 100),
                 ]);
             }
         }

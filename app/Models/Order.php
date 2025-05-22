@@ -15,6 +15,7 @@ class Order extends Model
         'event_id',
         'status',
         'total_price',
+        'point_conversion_rate',
     ];
 
     public function customer()

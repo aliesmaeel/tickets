@@ -95,6 +95,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SeatClassSeeder::class,
             EventSeatSeeder::class,
+            SettingsSeeder::class,
         ]);
 
     }
