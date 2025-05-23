@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('money_to_point_rate', 8, 4)->default(0.10);
-
+            $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();
+            $table->decimal('discount_value', 10, 2)->default(0);
         });
+
     }
 
     /**
@@ -23,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('money_to_point_rate');
+            $table->dropForeign(['coupon_id']);
+            $table->dropColumn('coupon_id');
+            $table->dropColumn('discount_value');
         });
     }
 };

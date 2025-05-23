@@ -34,6 +34,10 @@ return [
     'order_created_successfully' => 'تم إنشاء الطلب بنجاح',
     'some_seats_already_reserved' => 'بعض المقاعد محجوزة بالفعل',
     'order_creation_failed' => 'فشل في إنشاء الطلب',
+    'coupon_not_valid' => 'القسيمة غير صالحة',
+    'insufficient_points' => 'نقاط غير كافية',
+    'points_converted_successfully' => 'تم تحويل النقاط بنجاح',
+    'something_went_wrong' => 'حدث خطأ ما',
 
 
 ];

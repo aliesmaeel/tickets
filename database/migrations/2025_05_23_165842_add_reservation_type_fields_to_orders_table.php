@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('money_to_point_rate', 8, 4)->default(0.10);
-
+            $table->enum('reservation_type', ['Epay','Cache']);
+            $table->boolean('reservation_status')->default(false);
         });
     }
 
@@ -23,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('money_to_point_rate');
+            $table->dropColumn('reservation_type');
+            $table->dropColumn('reservation_status');
         });
     }
 };

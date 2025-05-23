@@ -13,9 +13,16 @@ class SettingsSeeder extends Seeder
      */
     public function run(): void
     {
+
+        Setting::updateOrCreate(
+            ['key' => 'money_to_point_rate'],
+            ['value' => 0.055]
+        );
+
         Setting::updateOrCreate(
             ['key' => 'point_to_money_rate'],
-            ['value' => 0.10] // 10 points = 1 EUR
+            ['value' => 0.07692]
         );
     }
+
 }

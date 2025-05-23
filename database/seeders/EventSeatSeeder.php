@@ -16,7 +16,7 @@ class EventSeatSeeder extends Seeder
 
     private $events =[1,2];
 
-    private $eventSeatClasses = [10,6];
+    private $eventSeatClasses = [10,3];
 
     public function run(): void
     {

@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
-            $table->decimal('total_price', 5, 2);
+            $table->decimal('base_price', 10, 2);
+            $table->decimal('total_price', 10, 2);
+
             $table->timestamps();
         });
 

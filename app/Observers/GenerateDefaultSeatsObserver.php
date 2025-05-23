@@ -17,7 +17,7 @@ class GenerateDefaultSeatsObserver
         }
 
         $existingStageSeats = SeatClass::where('event_id', $eventId)
-            ->whereIn('name', ['stage', 'empty','reserved'])
+            ->whereIn('name', ['stage', 'empty'])
             ->exists();
 
 
@@ -25,7 +25,6 @@ class GenerateDefaultSeatsObserver
             DB::table('seat_classes')->insert([
                 ['name' => 'empty', 'price' => 0, 'color' => '#000000', 'event_id' => $eventId, 'created_at' => now(), 'updated_at' => now()],
                 ['name' => 'stage', 'price' => 0, 'color' => '#808080', 'event_id' => $eventId, 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'reserved', 'price' => 0, 'color' => '#FFFF00', 'event_id' => $eventId, 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
     }

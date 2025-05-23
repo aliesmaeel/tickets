@@ -34,4 +34,8 @@ return [
     'order_created_successfully' => 'داواکاری بە سەرکەوتوویی دروست کرا',
     'some_seats_already_reserved' => 'هەندێ کەس پێشتر پاراستراوە',
     'order_creation_failed' => 'دروستکردنی داواکاری سەرکەوتوو نەبوو',
+    'coupon_not_valid' => 'کۆپۆن نادروستە',
+    'insufficient_points' => 'نقطەکان کەمە',
+    'points_converted_successfully' => 'نقطەکان بە سەرکەوتوویی گۆڕدرابوو',
+    'something_went_wrong' => 'هەڵەیەکی نەخۆش ڕوودەدات',
 ];

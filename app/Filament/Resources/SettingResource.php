@@ -28,20 +28,30 @@ class SettingResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('value')
-                    ->label('Value')
+                    ->label(function (Forms\Get $get) {
+                        return match ($get('key')) {
+                            'money_to_point_rate' => 'Value (1 IQD to Points Rate)',
+                            'point_to_money_rate' => 'Value (1 Point to IQD Rate)',
+                            default => 'Value',
+                        };
+                    })
                     ->hint(function (Forms\Get $get) {
                         $value = $get('value');
+                        $key = $get('key');
+
                         if (!$value || $value == 0) {
                             return 'Enter a value to see conversion info.';
                         }
 
-                        $points = 1 / $value;
-                        return "1 IQD = {$points} points";
+                        return match ($key) {
+                            'money_to_point_rate' => '1000 IQD = ' . (1000 * $value) . ' points',
+                            'point_to_money_rate' => '1000 points = ' . (1000 * $value) . ' IQD',
+                            default => null,
+                        };
                     })
                     ->numeric()
                     ->required()
                     ->reactive(),
-
             ]);
     }
 

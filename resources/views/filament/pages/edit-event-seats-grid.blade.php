@@ -23,6 +23,9 @@
         background-color: #dc3545;
         color: white;
     }
+    .Reserved{
+        opacity: 0.3;
+    }
 </style>
 
 <x-filament::page>
@@ -64,12 +67,12 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function showToast(message, icon = 'success') {
+        function showToast(message, icon = 'success', title = null, timer = 1000) {
             Swal.fire({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 500,
+                timer: timer,
                 timerProgressBar: true,
                 icon: icon,
                 title: message
@@ -99,7 +102,6 @@
 
                 const seatClasses = await seatClassesRes.json();
                 const seatData = await seatDataRes.json();
-
                 // Populate dropdown
                 seatClassSelect.innerHTML = '';
                 seatClasses.forEach(cls => {
@@ -170,6 +172,7 @@
                 btn.className = 'bg-gray-200 px-2 py-1 rounded text-xs mx-auto block';
                 btn.onclick = (e) => {
                     e.stopPropagation();
+
                     selectRow(row);
                 };
                 th.appendChild(btn);
@@ -180,22 +183,28 @@
                     td.className = 'border w-16 h-12 text-center text-sm cursor-pointer';
                     td.dataset.row = row;
                     td.dataset.col = col;
-
                     const matched = seats.find(seat => +seat.row === row && +seat.col === col);
                     const seatInfo = matched || stageClass;
 
                     if (seatInfo) {
+
                         td.textContent = seatInfo.seat_class_name || seatInfo.name || 'empty';
                         td.style.backgroundColor = seatInfo.color || '#ccc';
                         td.style.color = '#000';
+                        td.classList.add(seatInfo.status);
                         td.dataset.seatClass = JSON.stringify({
                             id: seatInfo.seat_class_id || seatInfo.id,
                             name: seatInfo.seat_class_name || seatInfo.name,
-                            color: seatInfo.color
+                            color: seatInfo.color,
+                            status: seatInfo.status
                         });
                     }
 
                     td.onclick = (e) => {
+                        if (e.target.classList.contains('Reserved')) {
+                            showToast('This seat is reserved.', 'error');
+                            return;
+                        }
                         e.stopPropagation();
                         clearSelection();
                         td.classList.add('ring', 'ring-blue-500');
@@ -221,6 +230,7 @@
         }
 
         function selectRow(rowIndex) {
+
             clearSelection();
             selectedCells = Array.from(document.querySelectorAll(`td[data-row="${rowIndex}"]`));
             selectedCells.forEach(cell => cell.classList.add('ring', 'ring-yellow-400'));
@@ -256,12 +266,20 @@
 
             const { id, name, color } = JSON.parse(selected);
 
-            selectedCells.forEach(cell => {
+            for (const cell of selectedCells) {
+                if (cell.classList.contains('Reserved')) {
+                    showToast('There is a seat in Row/Col is reserved.', 'error', null, 2000);
+                    hideBalloon();
+                    return;
+                }
+            }
 
+            for (const cell of selectedCells) {
                 cell.textContent = name;
                 cell.style.backgroundColor = color;
                 cell.dataset.seatClass = JSON.stringify({ id, name, color });
-            });
+            }
+
 
             hideBalloon();
             clearSelection();
@@ -284,7 +302,8 @@
                         row: parseInt(cell.dataset.row),
                         col: parseInt(cell.dataset.col),
                         seat_class_id: seatClass.id,
-                        seat_class_name: seatClass.name
+                        seat_class_name: seatClass.name,
+                        status: seatClass.status
                     };
                 }).filter(Boolean);
 
@@ -330,6 +349,7 @@
                     seat_class_id: stageClass?.id || null,
                     seat_class_name: stageClass?.name || 'empty',
                     color: stageClass?.color || '#ccc',
+                    status:'Available'
                 });
             }
 
@@ -350,6 +370,7 @@
                     seat_class_id: stageClass?.id || null,
                     seat_class_name: stageClass?.name || 'empty',
                     color: stageClass?.color || '#ccc',
+                    status:'Available'
                 });
             }
 

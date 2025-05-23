@@ -96,6 +96,7 @@ class DatabaseSeeder extends Seeder
             SeatClassSeeder::class,
             EventSeatSeeder::class,
             SettingsSeeder::class,
+            CouponSeeder::class,
         ]);
 
     }

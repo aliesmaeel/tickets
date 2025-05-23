@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('money_to_point_rate', 8, 4)->default(0.10);
-
+            $table->decimal('point_to_money_rate', 8, 5)->default(0.07692);
         });
+
     }
 
     /**
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('money_to_point_rate');
+            $table->dropColumn('point_to_money_rate');
         });
     }
 };

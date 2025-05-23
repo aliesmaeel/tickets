@@ -14,13 +14,12 @@ class SeatClassSeeder extends Seeder
     public function run(): void
     {
         $seatClasses = [
-            1 => ['empty', 'stage', 'reserved', 'Class A', 'Class B', 'Class C'],
-            2 => ['empty', 'stage', 'reserved', 'Gold', 'Silver', 'Bronze'],
+            1 => ['empty', 'stage', 'Class A', 'Class B', 'Class C'],
+            2 => ['empty', 'stage', 'Gold', 'Silver', 'Bronze'],
         ];
 
         $defaultColors = [
             'empty' => '#000000',
-            'reserved' => '#FFFF00',
             'stage' => '#808080',
         ];
 
@@ -30,7 +29,7 @@ class SeatClassSeeder extends Seeder
                     'event_id' => $eventId,
                     'name' => $name,
                     'color' => $defaultColors[$name] ?? fake()->hexColor(),
-                    'price' => in_array($name,['empty','reserved','stage']) ? 0 : fake()->randomNumber(2, 10, 100),
+                    'price' => in_array($name,['empty','stage']) ? 0 : fake()->randomNumber(2, 10, 100),
                 ]);
             }
         }
