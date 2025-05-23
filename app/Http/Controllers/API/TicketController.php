@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\TicketResource;
+use App\Models\Ticket;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+
+class TicketController extends Controller
+{
+    use ApiResponse;
+    public function getTickets(Request $request)
+    {
+        $filter = $request->input('filter', 'upcoming');
+        $customerId = auth()->id();
+        $tickets = Ticket::with(['event','orderSeat.eventSeat.seatClass'])
+            ->where('customer_id', $customerId)
+            ->where('status', $filter)
+            ->get();
+
+
+        return $this->respondValue(
+            TicketResource::collection($tickets),
+            'Tickets retrieved successfully'
+        );
+    }
+
+    public function scanTicket(Request $request)
+    {
+
+        $request->validate([
+            'ticket_code' => 'required|string|exists:tickets,ticket_code',
+        ]);
+
+        $ticket = Ticket::where('ticket_code', $request->ticket_code)->first();
+
+        if (!$ticket) {
+            return $this->respondError(message: 'Ticket not found', statusCode: 404);
+        }
+
+        if ($ticket->status === 'attended') {
+            return $this->respondError(message: 'Ticket already scanned', statusCode: 400);
+        }
+
+        $ticket->status = 'attended';
+        $ticket->save();
+
+        return $this->respondValue(
+            new TicketResource($ticket),
+            'Ticket scanned successfully'
+        );
+    }
+
+    ///todo: timer for an hours related to the event start time and if user
+    /// didnt scan the ticket in this time, the ticket will be expired
+    /// event coulmn will be back to available and order will be removed
+
+}

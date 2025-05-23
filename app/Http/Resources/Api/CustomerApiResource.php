@@ -19,7 +19,7 @@ class CustomerApiResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'phone' => $this->phone,
-            'image' => $this->image,
+            'image' => url($this->image),
             'is_active' => $this->is_active,
             'lang' => $this->lang,
             'wallet' => $this->wallet,

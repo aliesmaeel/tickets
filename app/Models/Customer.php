@@ -26,4 +26,9 @@ class Customer extends Authenticatable
             $customer->wallet()->create();
         });
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }

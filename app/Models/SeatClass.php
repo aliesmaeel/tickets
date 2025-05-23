@@ -12,6 +12,8 @@ class SeatClass extends Model
 
     protected $fillable = ['name', 'price', 'event_id','color'];
 
+
+    protected $hidden = ['created_at', 'updated_at'];
     public function event()
     {
         return $this->belongsTo(Event::class);

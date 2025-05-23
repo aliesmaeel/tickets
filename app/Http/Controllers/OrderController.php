@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Api\TicketResource;
 use App\Models\Coupon;
 use App\Models\Event;
 use App\Models\EventSeat;
 use App\Models\Order;
 use App\Models\SeatClass;
 use App\Models\Setting;
+use App\Models\Ticket;
 use App\Traits\ApiResponse;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Milon\Barcode\DNS1D;
 
 class OrderController extends Controller
 {
@@ -125,6 +130,24 @@ class OrderController extends Controller
                     'status' => 'Reserved',
                 ]);
 
+                $orderSeats = DB::table('order_seat')
+                    ->where('order_id', $order->id)
+                    ->whereIn('event_seat_id', $seatIds)
+                    ->get();
+
+                foreach ($orderSeats as $orderSeat) {
+                    $ticketCode = $this->generateTicketCode($order->id, $orderSeat->id);
+                    Ticket::create([
+                        'order_id' => $order->id,
+                        'order_seat_id' => $orderSeat->id,
+                        'ticket_code' => $ticketCode,
+                        'status' => 'upcoming',
+                        'customer_id' => $customer->id,
+                        'event_id' => $eventId,
+                    ]);
+                }
+
+
                 $createdOrders[] = [
                     'order_id' => $order->id,
                     'event_id' => $eventId,
@@ -151,7 +174,7 @@ class OrderController extends Controller
                 ]
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             logger()->error('Order creation failed', ['error' => $e->getMessage()]);
 
@@ -174,5 +197,14 @@ class OrderController extends Controller
         $seatClass = SeatClass::where('event_id', $eventId)->where('name', 'reserved')->first();
         return $seatClass ? $seatClass->id : null;
     }
+
+    protected function generateTicketCode(int $orderId, int $orderSeatId): string
+    {
+        $seed = $orderId . '-' . $orderSeatId . '-' . now()->timestamp;
+        return strtoupper(substr(sha1($seed), 0, 12));
+    }
+
+
+
 
 }

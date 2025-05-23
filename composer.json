@@ -12,6 +12,7 @@
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.9",
+        "milon/barcode": "^12.0",
         "solution-forest/filament-translate-field": "^1.4"
     },
     "require-dev": {

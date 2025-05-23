@@ -6,6 +6,7 @@ use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\CityController;
 use App\Http\Controllers\API\CustomerAuthController;
 use App\Http\Controllers\API\CustomerProfileController;
+use App\Http\Controllers\API\TicketController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WalletController;
@@ -51,6 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/apply-coupon', [CouponController::class, 'apply']);
     Route::post('/wallet/convert-points', [WalletController::class, 'convertPointsToMoney']);
 
+    Route::get('/get-my-tickets', [TicketController::class, 'getTickets']);
+    Route::post('/scan-ticket', [TicketController::class, 'scanTicket']);
 
 });
 
