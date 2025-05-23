@@ -35,7 +35,10 @@ class Event extends Model
         'name' => 'array',
         'address' => 'array',
     ];
-
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
     public $translatable = ['description','name'];
 
     public function category()
@@ -59,4 +62,8 @@ class Event extends Model
         return $this->hasMany(EventSeat::class);
     }
 
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }
