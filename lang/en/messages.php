@@ -33,5 +33,9 @@ return [
     'order_created_successfully' => 'Order created successfully',
     'some_seats_already_reserved' => 'Some seats are already reserved',
     'order_creation_failed' => 'Order creation failed',
+    'coupon_not_valid' => 'Coupon is not valid',
+    'insufficient_points' => 'Insufficient points',
+    'points_converted_successfully' => 'Points converted successfully',
+    'something_went_wrong' => 'Something went wrong',
 
 ];

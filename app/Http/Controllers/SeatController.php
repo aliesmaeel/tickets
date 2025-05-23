@@ -78,18 +78,25 @@ class SeatController extends Controller
 
 
         foreach ($submittedSeats as $seatData) {
-            EventSeat::updateOrCreate(
-                [
-                    'event_id' => $eventId,
-                    'row' => $seatData['row'],
-                    'col' => $seatData['col'],
 
-                ],
-                [
-                    'seat_class_id' => $seatData['seat_class_id'],
-                    'status' => $this->getSeatFromSeatClassId($seatData['seat_class_id']),
-                ]
-            );
+            if( isset($seatData['status']) && $seatData['status']== 'Reserved'){
+               continue;
+            }else{
+
+                EventSeat::updateOrCreate(
+                    [
+                        'event_id' => $eventId,
+                        'row' => $seatData['row'],
+                        'col' => $seatData['col'],
+
+                    ],
+                    [
+                        'seat_class_id' => $seatData['seat_class_id'],
+                        'status' => $this->getSeatFromSeatClassId($seatData['seat_class_id']),
+                    ]
+                );
+            }
+
         }
 
         $submittedKeys = $submittedSeats->map(function ($seat) {
@@ -120,12 +127,14 @@ class SeatController extends Controller
             'rows' => $maxRow,
             'cols' => $maxCol,
             'seats' => $event->seats->map(function ($seat) {
+
                 return [
                     'row' => $seat->row,
                     'col' => $seat->col,
                     'seat_class_id' => $seat->seat_class_id,
                     'seat_class_name' => $seat->seatClass->name ?? null,
                     'color' => $seat->seatClass->color ?? null,
+                    'status' => $seat->status,
                 ];
             }),
         ]);

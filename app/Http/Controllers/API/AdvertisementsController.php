@@ -28,7 +28,8 @@ class AdvertisementsController extends Controller
                     'title' => $ad->title_localized,
                     'description' => $ad->description_localized,
                     'link' => $ad->link,
-                    'image' => $ad->image,
+                    //image is a url which is app url then the image path
+                    'image' => url('storage/'.$ad->image),
                 ];
             });
 

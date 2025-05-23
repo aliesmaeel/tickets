@@ -14,4 +14,16 @@ class Customer extends Authenticatable
     protected $fillable = ['name', 'phone', 'password', 'image', 'is_active','lang'];
 
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at'];
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($customer) {
+            $customer->wallet()->create();
+        });
+    }
 }

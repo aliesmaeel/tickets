@@ -84,7 +84,6 @@ class SeatClassResource extends Resource
                 Tables\Filters\SelectFilter::make('name')
                     ->label('Seat Class Name')
                     ->options(fn () => \App\Models\SeatClass::query()
-                        ->where('name', '!=', 'reserved')
                         ->where('name', '!=', 'empty')
                         ->where('name', '!=', 'stage')
                         ->select('name')
@@ -102,7 +101,7 @@ class SeatClassResource extends Resource
 
 
             ->actions([
-                Tables\Actions\EditAction::make()->disabled(fn (SeatClass $record): bool => in_array($record->name, ['reserved', 'empty', 'stage'])),
+                Tables\Actions\EditAction::make()->disabled(fn (SeatClass $record): bool => in_array($record->name, ['empty', 'stage'])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -133,17 +132,17 @@ class SeatClassResource extends Resource
 
    public static function canEdit(Model $record): bool
    {
-       return parent::canEdit($record) && !in_array($record->name, ['reserved', 'empty', 'stage']);
+       return parent::canEdit($record) && !in_array($record->name, ['empty', 'stage']);
    }
     public static function canDelete(Model $record): bool
     {
-         return parent::canDelete($record) && !in_array($record->name, ['reserved', 'empty', 'stage']);
+         return parent::canDelete($record) && !in_array($record->name, ['empty', 'stage']);
     }
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return parent::getEloquentQuery()
-            ->whereNotIn('name', ['reserved', 'empty', 'stage']);
+            ->whereNotIn('name', ['empty', 'stage']);
     }
 
 }

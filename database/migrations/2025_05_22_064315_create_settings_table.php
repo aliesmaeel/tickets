@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
-            $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
-            $table->decimal('base_price', 10, 2);
-            $table->decimal('total_price', 10, 2);
-
+            $table->string('key')->unique();
+            $table->text('value');
             $table->timestamps();
         });
-
     }
 
     /**
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('settings');
     }
 };

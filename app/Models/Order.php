@@ -15,6 +15,10 @@ class Order extends Model
         'event_id',
         'status',
         'total_price',
+        'money_to_point_rate',
+        'coupon_id',
+        'discount_value',
+        'base_price',
     ];
 
     public function customer()
