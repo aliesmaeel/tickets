@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\CustomerApiResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -22,7 +23,7 @@ class CustomerProfileController extends Controller
             }
 
             App::setLocale($customer->lang);
-            return $this->respondValue($customer, __('messages.profile_retrieved_successfully'));
+            return $this->respondValue( new CustomerApiResource($customer), __('messages.profile_retrieved_successfully'));
 
         } catch (\Exception $e) {
             logger()->error('Profile retrieval error:', ['error' => $e->getMessage()]);
@@ -68,7 +69,7 @@ class CustomerProfileController extends Controller
         $customer->save();
 
         return $this->respondValue(__('messages.profile_updated_successfully'), [
-            'customer' => $customer,
+            'customer' => new CustomerApiResource($customer),
         ]);
     }
 }
