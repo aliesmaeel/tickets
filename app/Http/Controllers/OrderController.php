@@ -140,7 +140,6 @@ class OrderController extends Controller
                     Ticket::create([
                         'order_id' => $order->id,
                         'order_seat_id' => $orderSeat->id,
-                        'ticket_code' => $ticketCode,
                         'status' => 'upcoming',
                         'customer_id' => $customer->id,
                         'event_id' => $eventId,

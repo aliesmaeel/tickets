@@ -31,10 +31,10 @@ class TicketController extends Controller
     {
 
         $request->validate([
-            'ticket_code' => 'required|string|exists:tickets,ticket_code',
+            'ticket_code' => 'required|string|exists:tickets,id',
         ]);
 
-        $ticket = Ticket::where('ticket_code', $request->ticket_code)->first();
+        $ticket = Ticket::where('id', $request->ticket_code)->first();
 
         if (!$ticket) {
             return $this->respondError(message: 'Ticket not found', statusCode: 404);

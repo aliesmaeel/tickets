@@ -35,6 +35,15 @@ class EventResource extends Resource
                             ->default(null)
                     ])->locales(['en', 'ar','kur']),
 
+                Forms\Components\FileUpload::make('image')
+                    ->label('Event Image')
+                    ->image()
+                    ->required()
+                    ->maxSize(1024)
+                    ->disk('public')
+                    ->directory('events')
+                    ->preserveFilenames()
+                    ->columnSpanFull(),
                 Translate::make()
                     ->columnSpanFull()
                     ->label('Address')
