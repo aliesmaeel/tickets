@@ -17,7 +17,6 @@ class TicketResource extends JsonResource
         $userLang = $request->user()?->lang ?? 'en';
         return [
             'id' => $this->id,
-            'ticket_code' => $this->ticket_code,
             'status' => $this->status,
             'event_name' => $this->event?->name[$userLang],
             'address' => $this->event?->address[$userLang],

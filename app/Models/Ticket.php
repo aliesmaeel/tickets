@@ -9,7 +9,7 @@ class Ticket extends Model
 {
     use HasLocalizedAttributes;
 
-    protected $fillable = ['order_id', 'order_seat_id', 'ticket_code', 'status','customer_id','event_id'];
+    protected $fillable = ['order_id', 'order_seat_id', 'status','customer_id','event_id'];
 
     protected $hidden = [
         'created_at',
