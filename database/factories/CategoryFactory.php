@@ -24,7 +24,7 @@ class CategoryFactory extends Factory
             ],
             'slug'=>$fakerEn->slug(3),
             'image' => $this->faker->imageUrl(640, 480, 'cats'),
-            'status' => $this->faker->randomElement([true, false]),
+            'status' => true,
         ];
     }
 }

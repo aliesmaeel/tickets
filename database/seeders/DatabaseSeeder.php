@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
             'start_time' => '2025-05-01 10:00:00',
             'end_time' => '2025-05-01 12:00:00',
             'display_start_date' => '2025-05-01',
-            'display_end_date' => '2025-05-01',
+            'display_end_date' => today()->addDays(2)->toDateString(),
             'category_id' => 1,
             'city_id' => 1,
         ]);
@@ -85,7 +85,7 @@ class DatabaseSeeder extends Seeder
             'start_time' => '2025-05-02 14:00:00',
             'end_time' => '2025-05-02 16:00:00',
             'display_start_date' => '2025-05-02',
-            'display_end_date' => '2025-05-02',
+            'display_end_date' => today()->addDays(2)->toDateString(),
             'category_id' => 2,
             'city_id' => 2,
         ]);
