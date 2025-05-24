@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customers/categories', [CategoryController::class, 'getCategories']);
     Route::get('/customers/cities', [CityController::class, 'getCities']);
     Route::put('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
-    Route::get('/events', [EventController::class, 'index']);
+    Route::post('/events', [EventController::class, 'index']);
     Route::get('/events/{id}', [EventController::class, 'show']);
 
     Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
