@@ -31,8 +31,10 @@ class EventController extends Controller
         $validator = Validator::make($request->all(), [
             'page' => 'integer|min:1',
             'limit' => 'integer|min:1|max:100',
-            'category_id' => 'nullable|integer|exists:categories,id',
-            'city_id' => 'nullable|integer|exists:cities,id',
+            'category_id' => 'nullable|array',
+            'category_id.*' => 'integer|exists:categories,id',
+            'city_id' => 'nullable|array',
+            'city_id.*' => 'integer|exists:cities,id',
             'start_date' => 'nullable|date_format:Y-m-d',
             'end_date' => 'nullable|date_format:Y-m-d',
         ]);
@@ -41,19 +43,26 @@ class EventController extends Controller
             return $this->respondValidationErrors($validator->errors()->toArray());
         }
 
-        try{
+        try {
             $events = Event::with(['category', 'city'])
                 ->whereHas('category', function ($query) use ($category_id) {
                     $query->where('status', 1)
                         ->when($category_id, function ($query) use ($category_id) {
-                            $query->where('id', $category_id);
+                            if (is_array($category_id)) {
+                                $query->whereIn('id', $category_id);
+                            } else {
+                                $query->where('id', $category_id);
+                            }
                         });
                 })
                 ->whereHas('city', function ($query) use ($city_id) {
                     $query
-                        //->where('status', 1)
                         ->when($city_id, function ($query) use ($city_id) {
-                            $query->where('id', $city_id);
+                            if (is_array($city_id)) {
+                                $query->whereIn('id', $city_id);
+                            } else {
+                                $query->where('id', $city_id);
+                            }
                         });
                 })
                 ->when($start_date, function ($query) use ($start_date) {
@@ -65,7 +74,6 @@ class EventController extends Controller
                 ->whereDate('display_start_date', '<=', now())
                 ->whereDate('display_end_date', '>=', now())
                 ->where('active', 1)
-
                 ->orderBy('id', 'desc')
                 ->paginate($limit, ['*'], 'page', $page);
 
@@ -76,9 +84,7 @@ class EventController extends Controller
                     'last_page' => $events->lastPage(),
                     'per_page' => $events->perPage(),
                     'total' => $events->total(),
-
-
-                ]
+                ],
             ];
 
             return $this->respondValue($eventsResource, __('messages.events_retrieved_successfully'));
