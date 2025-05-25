@@ -53,8 +53,6 @@ class TicketController extends Controller
         );
     }
 
-    ///todo: timer for an hours related to the event start time and if user
-    /// didnt scan the ticket in this time, the ticket will be expired
-    /// event coulmn will be back to available and order will be removed
+    /// Todo revise jobs
 
 }
