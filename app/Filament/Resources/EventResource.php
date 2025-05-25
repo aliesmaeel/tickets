@@ -72,6 +72,21 @@ class EventResource extends Resource
                     ->required(),
                 Forms\Components\DateTimePicker::make('display_end_date')
                     ->required(),
+               Forms\Components\TextInput::make('time_to_place_cache_order')
+                    ->label('Time to Place Cache Order')
+                    ->helperText('Time in minutes So Customers can place the order.')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(60)
+                    ->required(),
+                Forms\Components\TextInput::make('max_cache_orders')
+                    ->label('Max Cache Orders')
+                    ->helperText('Maximum number of cache orders allowed for this event.')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(100)
+                    ->required(),
+
                Forms\Components\Select::make('city_id')
                     ->relationship('city', 'name')
                     ->required()

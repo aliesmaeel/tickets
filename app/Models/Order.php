@@ -19,6 +19,8 @@ class Order extends Model
         'coupon_id',
         'discount_value',
         'base_price',
+        'reservation_type',
+        'reservation_status',
     ];
 
     public function customer()

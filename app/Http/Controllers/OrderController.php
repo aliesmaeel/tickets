@@ -24,6 +24,7 @@ class OrderController extends Controller
     use ApiResponse;
     public function createOrder(Request $request)
     {
+
         App::setLocale(auth()->user()->lang);
 
         $request->validate([
@@ -108,16 +109,33 @@ class OrderController extends Controller
                 $totalPrice = number_format($totalPrice, 2, '.', '');
 
                 $rate = Setting::getRate('money_to_point_rate');
+                if ($request->reservation_type === 'Cache') {
+                    $order = Order::create([
+                        'customer_id' => $customer->id,
+                        'event_id' => $eventId,
+                        'total_price' => $totalPrice,
+                        'base_price' => $basePrice,
+                        'money_to_point_rate' => $rate,
+                        'coupon_id' => $coupon?->id,
+                        'discount_value' => $discount,
+                        'reservation_type' => 'Cache',
+                        'reservation_status' => false,
+                    ]);
+                }else{
+                    $order = Order::create([
+                        'customer_id' => $customer->id,
+                        'event_id' => $eventId,
+                        'total_price' => $totalPrice,
+                        'base_price' => $basePrice,
+                        'money_to_point_rate' => $rate,
+                        'coupon_id' => $coupon?->id,
+                        'discount_value' => $discount,
+                        'reservation_type' => 'Epay',
+                        'reservation_status' => true,
+                    ]);
+                }
 
-                $order = Order::create([
-                    'customer_id' => $customer->id,
-                    'event_id' => $eventId,
-                    'total_price' => $totalPrice,
-                    'base_price' => $basePrice,
-                    'money_to_point_rate' => $rate,
-                    'coupon_id' => $coupon?->id,
-                    'discount_value' => $discount,
-                ]);
+
 
 
                 $pointsEarned = $order->total_price * $rate;
