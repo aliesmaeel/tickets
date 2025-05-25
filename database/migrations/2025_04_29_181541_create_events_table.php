@@ -31,6 +31,9 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
 
             $table->boolean('active')->default(true);
+            $table->unsignedBigInteger('time_to_place_cache_order')->default(0);
+            $table->unsignedBigInteger('max_cache_orders')->default(0);
+
 
             $table->timestamps();
         });

@@ -24,6 +24,8 @@ class Event extends Model
         'display_end_date',
         'active',
         'type',
+        'max_cache_orders',
+        'time_to_place_cache_order',
     ];
 
     protected $casts = [
