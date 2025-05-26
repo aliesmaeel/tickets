@@ -31,6 +31,7 @@ class EventApiResource extends JsonResource
             'display_end_date' => Carbon::parse($this->display_end_date)->format('Y-m-d H:i:s'),
             'city' => new CityResource($this->city),
             'category' => new CategoryResource($this->category),
+            'max_cache_orders' => $this->max_cache_orders,
         ];
     }
 }
