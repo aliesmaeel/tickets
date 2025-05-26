@@ -6,11 +6,13 @@ use App\Models\Advertisement;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Customer;
+use App\Models\Event;
 use App\Models\EventSeat;
 use App\Models\SeatClass;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Database\Factories\CategoryFactory;
+use Database\Factories\EventFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -58,37 +60,7 @@ class DatabaseSeeder extends Seeder
 
         Category::factory()->count(5)->create();
         City::factory()->count(10)->create();
-
-        DB::table('events')->insert([
-            'name' => json_encode(['en' => 'Event 1', 'ar' => 'حدث 1', 'kur' => 'حدث 1']),
-            'description' =>
-                json_encode(['en' => 'Description for Event 1', 'ar' => 'وصف للحدث 1','kur' => 'وصف للحدث 1']),
-            'type' => 'party',
-            'image' => 'https://example.com/image1.jpg',
-            'address' => json_encode(['en' => 'Address for Event 1', 'ar' => 'عنوان للحدث 1', 'kur' => 'عنوان للحدث 1']),
-            'address_link' => 'https://example.com/address1',
-            'start_time' => '2025-05-01 10:00:00',
-            'end_time' => '2025-05-01 12:00:00',
-            'display_start_date' => '2025-05-01',
-            'display_end_date' => today()->addDays(2)->toDateString(),
-            'category_id' => 1,
-            'city_id' => 1,
-        ]);
-
-        DB::table('events')->insert([
-            'name' => json_encode(['en' => 'Event 2', 'ar' => 'حدث 2', 'kur' => 'حدث 2']),
-            'description' => json_encode(['en' => 'Description for Event 2', 'ar' => 'وصف للحدث 2', 'kur' => 'وصف للحدث 2']),
-            'type' => 'football',
-            'image' => 'https://example.com/image2.jpg',
-            'address' => json_encode(['en' => 'Address for Event 2', 'ar' => 'عنوان للحدث 2', 'kur' => 'عنوان للحدث 2']),
-            'address_link' => 'https://example.com/address2',
-            'start_time' => '2025-05-02 14:00:00',
-            'end_time' => '2025-05-02 16:00:00',
-            'display_start_date' => '2025-05-02',
-            'display_end_date' => today()->addDays(2)->toDateString(),
-            'category_id' => 2,
-            'city_id' => 2,
-        ]);
+        Event::factory()->count(30)->create();
 
         Advertisement::factory()->count(5)->create();
         Customer::factory()->count(1)->create();
