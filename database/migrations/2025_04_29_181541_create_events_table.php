@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->text('address')->nullable();
             $table->string('address_link',250)->nullable();
+            $table->string('address_image')->nullable();
             $table->string('start_time');
             $table->string('end_time');
             $table->string('display_start_date')->nullable();
