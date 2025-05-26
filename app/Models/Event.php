@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\HasLocalizedAttributes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Concerns\Package\HasTranslations;
 
 class Event extends Model
 {
-    use HasTranslations,HasLocalizedAttributes;
+    use HasTranslations,HasLocalizedAttributes,HasFactory;
 
 
 
