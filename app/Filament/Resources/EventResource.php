@@ -63,7 +63,11 @@ class EventResource extends Resource
                     ])->locales(['en', 'ar','kur']),
                 Forms\Components\TextInput::make('address_link')
                     ->maxLength(250)
-                    ->default(null),
+                    ->default(null)
+                ->helperText('Please the link from browser address bar, not the Google Maps link.
+                Example : https://www.google.com/maps/@52.0890557,9.5394413,186096m/data=!3m1!1e3?entry=ttu&g_ep=EgoyMDI1MDUyMS4wIKXMDSoASAFQAw%3D%3D
+                ')
+                ->columnSpanFull(),
                 Forms\Components\FileUpload::make('address_image')
                     ->label('Address Image')
                     ->image()
