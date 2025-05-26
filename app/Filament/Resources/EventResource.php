@@ -64,6 +64,14 @@ class EventResource extends Resource
                 Forms\Components\TextInput::make('address_link')
                     ->maxLength(250)
                     ->default(null),
+                Forms\Components\FileUpload::make('address_image')
+                    ->label('Address Image')
+                    ->image()
+                    ->required()
+                    ->maxSize(1024)
+                    ->disk('public')
+                    ->preserveFilenames()
+                    ->columnSpanFull(),
                 Forms\Components\DateTimePicker::make('start_time')
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_time')

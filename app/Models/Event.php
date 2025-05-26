@@ -18,6 +18,7 @@ class Event extends Model
         'image',
         'address',
         'address_link',
+        'address_image',
         'start_time',
         'end_time',
         'display_start_date',

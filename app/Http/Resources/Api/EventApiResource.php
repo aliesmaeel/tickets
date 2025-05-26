@@ -24,6 +24,7 @@ class EventApiResource extends JsonResource
             'image' => url('storage/'.$this->image) ?? null,
             'address' => $this->address_localized,
             'address_link' => $this->address_link,
+            'address_image' => url('storage/'.$this->address_image),
             'start_date' => Carbon::parse($this->start_time)->format('Y-m-d H:i:s'),
             'end_date' => Carbon::parse($this->end_time)->format('Y-m-d H:i:s'),
             'display_start_date' => Carbon::parse($this->display_start_date)->format('Y-m-d H:i:s'),
