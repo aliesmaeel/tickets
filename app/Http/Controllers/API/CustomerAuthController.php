@@ -29,13 +29,15 @@ class CustomerAuthController extends Controller
 
         try {
 
-            $data = $request->only('phone', 'password', 'name', 'lang');
+            $data = $request->only('phone', 'password', 'name', 'lang','birth_date','gender');
 
             $validator = Validator::make($data, [
                 'phone' => 'required|unique:customers,phone',
                 'password' => 'required|min:6',
                 'name' => 'required|string',
                 'lang' => 'required|string',
+                'birth_date' => 'required',
+                'gender'=>'required'
             ]);
 
             if ($validator->fails()) {
@@ -92,6 +94,8 @@ class CustomerAuthController extends Controller
                 'name' => $cached['name'] ?? null,
                 'is_active' => true,
                 'lang' => $cached['lang'] ?? null,
+                'birth_date'=>$cached['birth_date'],
+                'gender'=>$cached['gender']
             ]);
 
             cache()->forget("otp:{$data['recipient']}");

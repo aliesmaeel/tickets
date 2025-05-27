@@ -33,12 +33,14 @@ class CustomerProfileController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $data = $request->only('name', 'lang', 'password','password_confirmation','image');
+        $data = $request->only('name', 'lang', 'password','password_confirmation','image','birth_date','gender');
 
         $validator = Validator::make($data, [
             'name' => 'nullable|string|max:255',
             'lang' => 'nullable|string|max:10',
             'password' => 'nullable|string|min:6|confirmed',
+            'birth_date'=>'nullable',
+            'gender'=>'nullable'
         ]);
 
         if ($validator->fails()) {
@@ -58,6 +60,13 @@ class CustomerProfileController extends Controller
 
         if (isset($data['password'])) {
             $customer->password = Hash::make($data['password']);
+        }
+
+        if (isset($data['birth_date'])) {
+            $customer->birth_date = $data['birth_date'];
+        }
+        if (isset($data['gender'])){
+            $customer->gender=$data['gender'];
         }
 
         if($request->hasFile('image')) {

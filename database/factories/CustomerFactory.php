@@ -22,6 +22,8 @@ class CustomerFactory extends Factory
             'password'=> bcrypt('123456789'),
             'lang'=> 'ar',
             'is_active'=> 1,
+            'birth_date'=>'22-02-2022',
+            'gender'=>'male',
         ];
     }
 }

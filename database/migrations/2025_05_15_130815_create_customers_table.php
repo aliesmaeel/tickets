@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->string('password');
+            $table->string('birth_date');
+            $table->enum('gender',['male','female']);
             $table->string('image',90)->nullable();
             $table->boolean('is_active')->default(0);
             $table->string('remember_token')->nullable();
