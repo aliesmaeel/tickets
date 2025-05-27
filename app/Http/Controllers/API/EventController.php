@@ -22,6 +22,7 @@ class EventController extends Controller
 
         $page = $request->input('page', 1);
         $limit = $request->input('limit', 10);
+        $name = $request->input('name') ?? null;
         $category_id = $request->input('category_id') ?? null;
         $city_id = $request->input('city_id') ?? null;
         $start_date = $request->input('start_date') ?? null;
@@ -37,6 +38,7 @@ class EventController extends Controller
             'city_id.*' => 'integer|exists:cities,id',
             'start_date' => 'nullable|date_format:Y-m-d',
             'end_date' => 'nullable|date_format:Y-m-d',
+            'name' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -56,14 +58,13 @@ class EventController extends Controller
                         });
                 })
                 ->whereHas('city', function ($query) use ($city_id) {
-                    $query
-                        ->when($city_id, function ($query) use ($city_id) {
-                            if (is_array($city_id)) {
-                                $query->whereIn('id', $city_id);
-                            } else {
-                                $query->where('id', $city_id);
-                            }
-                        });
+                    $query->when($city_id, function ($query) use ($city_id) {
+                        if (is_array($city_id)) {
+                            $query->whereIn('id', $city_id);
+                        } else {
+                            $query->where('id', $city_id);
+                        }
+                    });
                 })
                 ->when($start_date, function ($query) use ($start_date) {
                     $query->whereDate('start_time', '>=', $start_date);
@@ -74,8 +75,16 @@ class EventController extends Controller
                 ->whereDate('display_start_date', '<=', now())
                 ->whereDate('display_end_date', '>=', now())
                 ->where('active', 1)
+                ->when($name, function ($query) use ($name) {
+                    $query->where(function ($q) use ($name) {
+                        $q->where('name->en', 'like', '%' . $name . '%')
+                            ->orWhere('name->ar', 'like', '%' . $name . '%')
+                            ->orWhere('name->kur', 'like', '%' . $name . '%');
+                    });
+                })
                 ->orderBy('id', 'desc')
                 ->paginate($limit, ['*'], 'page', $page);
+
 
             $eventsResource = [
                 'data' => EventApiResource::collection($events->items())->resolve(),

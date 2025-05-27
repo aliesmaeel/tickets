@@ -4,9 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
+use App\Filament\Widgets\GenderDistributionChart;
 use App\Models\Event;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -128,15 +130,9 @@ class EventResource extends Resource
                         return $record->description['en'] ?? $record->description;
                     }),
                 Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('address_link')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('start_time')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('end_time')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('display_start_date')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('display_end_date')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('active')
                     ->boolean(),
@@ -154,6 +150,7 @@ class EventResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->icon('heroicon-o-eye'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -175,6 +172,7 @@ class EventResource extends Resource
             'index' => Pages\ListEvents::route('/'),
             'create' => Pages\CreateEvent::route('/create'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
+            'view' => Pages\ViewEvent::route('/{record}'),
         ];
     }
 }
