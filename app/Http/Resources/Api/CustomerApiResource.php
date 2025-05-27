@@ -23,6 +23,8 @@ class CustomerApiResource extends JsonResource
             'is_active' => $this->is_active,
             'lang' => $this->lang,
             'wallet' => $this->wallet,
+            'birth_date'=>$this->birth_date,
+            'gender'=>$this->gender
         ];
 
     }

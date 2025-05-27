@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Pages\CreateEventSeatsGrid;
+use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\ViewEventSeats;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -20,6 +21,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -37,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
                 CreateEventSeatsGrid::class,
                 ViewEventSeats::class
             ])
@@ -62,6 +64,8 @@ class AdminPanelProvider extends PanelProvider
             ]) ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
                 FilamentTranslateFieldPlugin::make()->defaultLocales(['en', 'ar','kur']),
+                FilamentApexChartsPlugin::make()
+
             ]);
     }
 }
