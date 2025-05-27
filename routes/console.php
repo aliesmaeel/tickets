@@ -8,5 +8,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('orders:cleanup-expired-cache')->everyMinute();
-Schedule::command('tickets:mark-missed')->everyMinute();
+Schedule::command('orders:cleanup-expired-cache')->everyFiveMinutes();
+Schedule::command('tickets:mark-missed')->twiceDaily();

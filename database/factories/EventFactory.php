@@ -30,6 +30,7 @@ class EventFactory extends Factory
             'category_id' => $this->faker->numberBetween(1, 5),
             'city_id' => $this->faker->numberBetween(1, 5),
             'max_cache_orders' => $this->faker->numberBetween(1, 100),
+            'time_to_place_cache_order' => $this->faker->numberBetween(3, 8),
         ];
     }
 }
