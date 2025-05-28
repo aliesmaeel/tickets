@@ -28,8 +28,8 @@ jobs:
             TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
             BACKUP_DIR="/home/tickdot/backups"
             DB_NAME="tickets"
-            DB_USER="sam"
-            DB_PASS="dd8csRuGgp3xy2SJHkFi"
+            DB_USER="${{ secrets.DB_USERNAME }}"
+            DB_PASS="${{ secrets.DB_PASSWORD }}"
 
             mkdir -p $BACKUP_DIR
             mysqldump -u$DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/${DB_NAME}_backup_$TIMESTAMP.sql
