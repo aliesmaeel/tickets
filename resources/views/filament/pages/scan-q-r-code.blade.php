@@ -8,20 +8,16 @@
         </div>
 
         <template x-if="qrCode">
-            <div class="p-4 bg-green-100 text-green-800 rounded-lg border border-green-200">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <strong class="block">Scanned QR Code:</strong>
-                        <span x-text="qrCode" class="font-mono"></span>
-                    </div>
-                    <button @click="resetScanner" class="text-green-600 hover:text-green-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
+            <div class="bg-white shadow p-4 rounded-lg border">
+                <div><strong>Event:</strong> {{ $event ?? '...' }}</div>
+                <div><strong>Row:</strong> {{ $row ?? '...' }}</div>
+                <div><strong>Column:</strong> {{ $col ?? '...' }}</div>
+                <div><strong>Customer:</strong> {{ $customer?->name ?? '...' }}</div>
+                <div><strong>Price:</strong> {{ $price ?? '...' }}</div>
+                <div><strong>Event Start Time:</strong> {{ $event_start_time ?? '...' }}</div>
             </div>
         </template>
+
 
         <form wire:submit.prevent="verifyScan" class="space-y-4">
             <input type="hidden" wire:model="qrData" />
