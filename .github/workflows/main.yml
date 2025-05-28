@@ -24,6 +24,16 @@ jobs:
           script: |
             cd /home/tickdot/htdocs/tickdot.app/tickets
 
+            # Backup the database
+            TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+            BACKUP_DIR="/home/tickdot/backups"
+            DB_NAME="tickets"
+            DB_USER="sam"
+            DB_PASS="vSVJtIjPrdE2HK4aEH2f"
+
+            mkdir -p $BACKUP_DIR
+            mysqldump -u$DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/${DB_NAME}_backup_$TIMESTAMP.sql
+
             # Allow Git to access this repo
             git config --global --add safe.directory /home/tickdot/htdocs/tickdot.app/tickets
 
@@ -48,4 +58,5 @@ jobs:
 
             chmod -R 777 storage
             chmod -R 777 bootstrap/cache
+
 
