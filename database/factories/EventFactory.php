@@ -17,11 +17,19 @@ class EventFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => (['en' => 'Event 1', 'ar' => 'حدث 1', 'kur' => 'حدث 1']),
-            'description' => ['en' => 'Description for Event 1', 'ar' => 'وصف للحدث 1','kur' => 'وصف للحدث 1'],
+            'name' => (['en' => $this->faker->word, 'ar' => $this->faker->word, 'kur' => $this->faker->word]),
+            'description' => ([
+                'en' => $this->faker->sentence(10),
+                'ar' => $this->faker->sentence(10),
+                'kur' => $this->faker->sentence(10),
+            ]),
             'type' => $this->faker->randomElement(['party', 'concert', 'football', 'conference']),
             'image' => $this->faker->imageUrl(640, 480, 'event', true, 'Event 1'),
-            'address' => ['en' => 'Address for Event 1', 'ar' => 'عنوان للحدث 1', 'kur' => 'عنوان للحدث 1'],
+            'address' => [
+                'en' => $this->faker->address,
+                'ar' => $this->faker->address,
+                'kur' => $this->faker->address,
+            ],
             'address_link' => $this->faker->url,
             'start_time' => '2025-05-01 10:00:00',
             'end_time' => $this->faker->dateTimeBetween('now', '+1 month')->format('Y-m-d H:i:s'),
