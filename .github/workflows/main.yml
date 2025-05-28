@@ -29,7 +29,7 @@ jobs:
             BACKUP_DIR="/home/tickdot/backups"
             DB_NAME="tickets"
             DB_USER="sam"
-            DB_PASS="vSVJtIjPrdE2HK4aEH2f"
+            DB_PASS="dd8csRuGgp3xy2SJHkFi"
 
             mkdir -p $BACKUP_DIR
             mysqldump -u$DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/${DB_NAME}_backup_$TIMESTAMP.sql
