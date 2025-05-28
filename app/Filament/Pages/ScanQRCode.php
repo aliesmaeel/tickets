@@ -14,6 +14,12 @@ class ScanQRCode extends Page
     protected static string $view = 'filament.pages.scan-q-r-code';
 
     public $qrData = null;
+    public $event;
+    public $row;
+    public $col;
+    public $customer;
+    public $price;
+    public $event_start_time;
 
     protected $listeners = ['autoVerify' => 'setQrData'];
 
@@ -37,7 +43,14 @@ class ScanQRCode extends Page
                 $number = $matches[0];
             }
             $this->qrData=$number;
-            $ticket = Ticket::find($number);
+            $ticket = Ticket::find($this->qrData)->load(['event', 'order', 'orderSeat.eventSeat', 'customer','event.seatClasses']);
+
+            $this->event = $ticket->event->name['en'] ;
+            $this->row = $ticket->orderSeat->eventSeat->row;
+            $this->col = $ticket->orderSeat->eventSeat->col;
+            $this->customer = $ticket->customer;
+            $this->price = $ticket->event->seatClasses->where('id', $ticket->orderSeat->eventSeat->seat_class_id)->first()->price;
+            $this->event_start_time = $ticket->event->start_time;
 
             if ($ticket->status !== 'upcoming') {
 
