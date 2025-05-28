@@ -26,7 +26,7 @@ jobs:
 
             # Backup the database
             TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-            BACKUP_DIR="/home/tickdot/backups"
+            BACKUP_DIR="/home/tickdot/backups/deployments"
             DB_NAME="tickets"
             DB_USER="${{ secrets.DB_USERNAME }}"
             DB_PASS="${{ secrets.DB_PASSWORD }}"
@@ -49,7 +49,8 @@ jobs:
             php artisan view:clear
             php artisan cache:clear
 
-            php artisan app:refresh-db-permissions
+            php artisan migrate --force
+            php artisan db:seed
 
             php artisan config:cache
             php artisan route:cache

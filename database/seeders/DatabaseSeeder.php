@@ -61,7 +61,6 @@ class DatabaseSeeder extends Seeder
         Category::factory()->count(5)->create();
         City::factory()->count(10)->create();
         Event::factory()->count(30)->create();
-
         Advertisement::factory()->count(5)->create();
         Customer::factory()->count(1)->create();
         $this->call([
