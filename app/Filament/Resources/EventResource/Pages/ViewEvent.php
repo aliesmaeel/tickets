@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EventResource\Pages;
 
 use App\Filament\Resources\EventResource;
 use App\Filament\Widgets\GenderDistributionChart;
+use App\Filament\Widgets\SeatAvailabilityChart;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Widgets\WidgetConfiguration;
 
@@ -15,6 +16,8 @@ class ViewEvent extends ViewRecord
     {
         return [
             GenderDistributionChart::class,
+            SeatAvailabilityChart::class,
+
         ];
     }
 
