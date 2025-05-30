@@ -13,6 +13,7 @@ class ScanQRCode extends Page
     protected static ?string $navigationIcon = 'heroicon-o-camera';
     protected static string $view = 'filament.pages.scan-q-r-code';
 
+    protected static ?string $title = 'Scan QR Code';
     public $qrData = null;
     public $event;
     public $row;
