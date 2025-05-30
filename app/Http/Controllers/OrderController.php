@@ -39,17 +39,7 @@ class OrderController extends Controller
         $discount = 0;
 
         if ($request->filled('coupon_code')) {
-            $coupon = Coupon::where('code', $request->coupon_code)
-                ->where('is_active', true)
-                ->where(function ($q) {
-                    $q->whereNull('expires_at')
-                        ->orWhere('expires_at', '>', now());
-                })
-                ->where(function ($q) {
-                    $q->whereNull('max_uses')
-                        ->orWhereColumn('used_count', '<', 'max_uses');
-                })
-                ->first();
+            $coupon = Coupon::findValidCoupon($request->coupon_code);
 
             if (!$coupon) {
                 return $this->respondError(__('messages.coupon_not_valid'), null, 422);
@@ -58,7 +48,6 @@ class OrderController extends Controller
 
         $eventId = $request->event_id;
         $seatIds = collect($request->seats);
-
         $createdOrders = [];
         $conflictingSeats = [];
 
@@ -89,11 +78,9 @@ class OrderController extends Controller
             }
 
             $basePrice = $lockedSeats->sum(fn($seat) => $seat->seatClass->price ?? 0);
-            if ($coupon) {
-                $discount = $coupon->type === 'fixed'
-                    ? min($coupon->value, $basePrice)
-                    : $basePrice * ($coupon->value / 100);
 
+            if ($coupon) {
+                $discount = $basePrice - $coupon->applyDiscount($basePrice);
                 $coupon->increment('used_count');
             }
 
@@ -127,7 +114,6 @@ class OrderController extends Controller
                 ->get();
 
             foreach ($orderSeats as $orderSeat) {
-                $ticketCode = $this->generateTicketCode($order->id, $orderSeat->id);
                 Ticket::create([
                     'order_id' => $order->id,
                     'order_seat_id' => $orderSeat->id,
@@ -174,6 +160,7 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
 
 
 
