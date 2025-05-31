@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\SeatClass;
 use App\Models\Setting;
 use App\Models\Ticket;
+use App\Services\PaymentService;
 use App\Traits\ApiResponse;
 use Exception;
 use Illuminate\Http\Request;
@@ -18,10 +19,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Milon\Barcode\DNS1D;
-
+use App\Helpers\WalletHelper;
 class OrderController extends Controller
 {
     use ApiResponse;
+
     public function createOrder(Request $request)
     {
         App::setLocale(auth()->user()->lang);
@@ -32,15 +34,16 @@ class OrderController extends Controller
             'event_id' => 'required|integer|exists:events,id',
             'coupon_code' => 'nullable|string|exists:coupons,code',
             'reservation_type' => 'required|in:Cache,Epay',
+            'split_payment' => 'required|boolean',
         ]);
 
         $customer = auth()->user();
         $coupon = null;
         $discount = 0;
+        $discountFromWallet = 0;
 
         if ($request->filled('coupon_code')) {
             $coupon = Coupon::findValidCoupon($request->coupon_code);
-
             if (!$coupon) {
                 return $this->respondError(__('messages.coupon_not_valid'), null, 422);
             }
@@ -48,9 +51,6 @@ class OrderController extends Controller
 
         $eventId = $request->event_id;
         $seatIds = collect($request->seats);
-        $createdOrders = [];
-        $conflictingSeats = [];
-
         DB::beginTransaction();
 
         try {
@@ -60,20 +60,13 @@ class OrderController extends Controller
                 ->lockForUpdate()
                 ->get();
 
-            $alreadyReservedSeats = $lockedSeats->filter(
-                fn($seat) => strtolower($seat->status) !== 'available'
-            );
-
+            $alreadyReservedSeats = $lockedSeats->filter(fn($s) => strtolower($s->status) !== 'available');
             if ($alreadyReservedSeats->isNotEmpty()) {
-                $conflictingSeats = $alreadyReservedSeats->pluck('id')->toArray();
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
                     'message' => __('messages.some_seats_already_reserved'),
-                    'data' => [
-                        'conflicting_seat_ids' => $conflictingSeats,
-                        'created_orders' => [],
-                    ],
+                    'data' => ['conflicting_seat_ids' => $alreadyReservedSeats->pluck('id')->toArray()],
                 ]);
             }
 
@@ -81,39 +74,78 @@ class OrderController extends Controller
 
             if ($coupon) {
                 $discount = $basePrice - $coupon->applyDiscount($basePrice);
-                $coupon->increment('used_count');
             }
 
-            $totalPrice = number_format($basePrice - $discount, 2, '.', '');
-            $rate = Setting::getRate('money_to_point_rate');
+            $priceAfterDiscount = $basePrice - $discount;
+            $wallet = $customer->wallet;
+            $walletMoney = $wallet->balance;
+            $walletCanCover = WalletHelper::checkWalletHasEnoughMoney($wallet, $priceAfterDiscount);
+            $reservationStatus = false;
+            $reservationType = $request->reservation_type;
+
+
+            if (!$request->split_payment) {
+                if ($reservationType === 'Epay') {
+                    if (PaymentService::charge($priceAfterDiscount)) {
+                        $reservationStatus = true;
+                        $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
+                    } else {
+                        DB::rollBack();
+                        return $this->respondError(__('messages.no_enough_money_card'));
+                    }
+                }
+            } else {
+                if ($reservationType === 'Epay') {
+                    if ($walletCanCover) {
+                        $discountFromWallet = $priceAfterDiscount;
+                        $wallet->decrement('balance', $discountFromWallet);
+                        $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
+                        $reservationStatus = true;
+                        $reservationType = 'Wallet';
+                    } else {
+                        $discountFromWallet = $walletMoney;
+                        $remaining = $priceAfterDiscount - $walletMoney;
+                        if (PaymentService::charge($remaining)) {
+                            $wallet->decrement('balance', $walletMoney);
+                            $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
+                            $reservationStatus = true;
+                        } else {
+                            DB::rollBack();
+                            return $this->respondError(__('messages.no_enough_money_card'));
+                        }
+                    }
+                } elseif ($reservationType === 'Cache') {
+                    if ($walletCanCover) {
+                        $discountFromWallet = $priceAfterDiscount;
+                        $wallet->decrement('balance', $discountFromWallet);
+                        $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
+                        $reservationStatus = true;
+                        $reservationType = 'Wallet';
+                    } else {
+                        $discountFromWallet = $walletMoney;
+                        $wallet->decrement('money', $walletMoney);
+                    }
+                }
+            }
 
             $order = Order::create([
                 'customer_id' => $customer->id,
                 'event_id' => $eventId,
-                'total_price' => $totalPrice,
+                'total_price' => $priceAfterDiscount,
                 'base_price' => $basePrice,
-                'money_to_point_rate' => $rate,
+                'money_to_point_rate' => Setting::getRate('money_to_point_rate'),
                 'coupon_id' => $coupon?->id,
                 'discount_value' => $discount,
-                'reservation_type' => $request->reservation_type,
-                'reservation_status' => $request->reservation_type === 'Epay',
+                'discount_wallet_value' => $discountFromWallet,
+                'reservation_type' => $reservationType,
+                'reservation_status' => $reservationStatus,
             ]);
-
-            $pointsEarned = $order->total_price * $rate;
-            $customer->wallet->increment('points', (int) $pointsEarned);
 
             $order->seats()->attach($seatIds);
+            EventSeat::whereIn('id', $seatIds)->update(['status' => 'Reserved']);
 
-            EventSeat::whereIn('id', $seatIds)->update([
-                'status' => 'Reserved',
-            ]);
-
-            $orderSeats = DB::table('order_seat')
-                ->where('order_id', $order->id)
-                ->whereIn('event_seat_id', $seatIds)
-                ->get();
-
-            foreach ($orderSeats as $orderSeat) {
+            foreach ($seatIds as $id) {
+                $orderSeat = DB::table('order_seat')->where('order_id', $order->id)->where('event_seat_id', $id)->first();
                 Ticket::create([
                     'order_id' => $order->id,
                     'order_seat_id' => $orderSeat->id,
@@ -123,15 +155,9 @@ class OrderController extends Controller
                 ]);
             }
 
-            $createdOrders[] = [
-                'order_id' => $order->id,
-                'event_id' => $eventId,
-                'base_price' => $basePrice,
-                'discount' => $discount,
-                'total_price' => $totalPrice,
-                'booked_seat_ids' => $seatIds,
-                'applied_coupon' => $coupon?->code,
-            ];
+            if ($coupon) {
+                $coupon->increment('used_count');
+            }
 
             DB::commit();
 
@@ -139,27 +165,28 @@ class OrderController extends Controller
                 'success' => true,
                 'message' => __('messages.order_created_successfully'),
                 'data' => [
-                    'created_orders' => $createdOrders,
-                    'conflicting_seat_ids' => $conflictingSeats,
-                    'wallet_points' => $customer->wallet->points,
+                    'order_id' => $order->id,
+                    'base_price' => $basePrice,
+                    'discount' => $discount,
+                    'total_price' => $priceAfterDiscount,
+                    'discount_wallet_value' => $discountFromWallet,
+                    'reservation_type' => $reservationType,
+                    'reservation_status' => $reservationStatus,
+                    'wallet_points' => $wallet->points,
                 ],
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             logger()->error('Order creation failed', ['error' => $e->getMessage()]);
-
             return response()->json([
                 'success' => false,
                 'message' => __('messages.order_creation_failed'),
-                'data' => [
-                    'created_orders' => $createdOrders,
-                    'conflicting_seat_ids' => $conflictingSeats,
-                    'error' => $e->getMessage(),
-                ],
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
 
 

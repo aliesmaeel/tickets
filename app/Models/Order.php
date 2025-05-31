@@ -17,7 +17,7 @@ class Order extends Model
         'total_price',
         'money_to_point_rate',
         'coupon_id',
-        'discount_value',
+        'discount_coupon',
         'base_price',
         'reservation_type',
         'reservation_status',
@@ -41,6 +41,11 @@ class Order extends Model
     public function coupon()
     {
         return $this->belongsTo(Coupon::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
     }
 
 }

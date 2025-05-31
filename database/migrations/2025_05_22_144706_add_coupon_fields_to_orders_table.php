@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();
-            $table->decimal('discount_value', 10, 2)->default(0);
+            $table->decimal('discount_coupon', 10, 2)->default(0);
         });
 
     }
@@ -26,7 +26,7 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->dropForeign(['coupon_id']);
             $table->dropColumn('coupon_id');
-            $table->dropColumn('discount_value');
+            $table->dropColumn('discount_coupon');
         });
     }
 };
