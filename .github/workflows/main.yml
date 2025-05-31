@@ -49,7 +49,7 @@ jobs:
             php artisan view:clear
             php artisan cache:clear
 
-            php artisan app:refresh-db-permissions
+            php artisan migrate --force
             php artisan db:seed
 
             php artisan config:cache
