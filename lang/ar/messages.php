@@ -38,6 +38,7 @@ return [
     'insufficient_points' => 'نقاط غير كافية',
     'points_converted_successfully' => 'تم تحويل النقاط بنجاح',
     'something_went_wrong' => 'حدث خطأ ما',
+    'max_allowed_cache_orders_reached' => 'تم الوصول إلى الحد الأقصى المسموح به من الطلبات المؤقتة',
 
 
 ];

@@ -37,5 +37,6 @@ return [
     'insufficient_points' => 'Insufficient points',
     'points_converted_successfully' => 'Points converted successfully',
     'something_went_wrong' => 'Something went wrong',
+    'max_allowed_cache_orders_reached' => 'You have reached the maximum allowed cache orders',
 
 ];

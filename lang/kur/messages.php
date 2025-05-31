@@ -38,4 +38,5 @@ return [
     'insufficient_points' => 'نقطەکان کەمە',
     'points_converted_successfully' => 'نقطەکان بە سەرکەوتوویی گۆڕدرابوو',
     'something_went_wrong' => 'هەڵەیەکی نەخۆش ڕوودەدات',
+    'max_allowed_cache_orders_reached' => 'بەرهەمەکان کەسەکان بەرزترین ژمارەی داواکارییەکان گەیشتوو',
 ];

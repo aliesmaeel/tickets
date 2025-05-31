@@ -26,17 +26,18 @@
             <div class="flex space-x-4 justify-center">
 
 
-                <x-filament::button type="button" @click="resetScanner" x-show="qrCode" color="secondary">
+                <x-filament::button type="button" @click="resetScanner" x-show="qrData" @style('background-color: #f3f4f6; color: #111827; border:1px solid') class="w-full justify-center">
                     Scan Again
                 </x-filament::button>
             </div>
         </form>
-
-        <form wire:submit.prevent="markAsAttended" x-show="qrData">
-            <x-filament::button type="submit" color="success" class="w-full justify-center">
+        @if($this->isVerified)
+        <form wire:submit.prevent="markAsAttended">
+         <x-filament::button type="submit" color="success" class="w-full justify-center">
                 Mark as Attended
             </x-filament::button>
         </form>
+        @endif
     </div>
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -80,6 +81,7 @@
                     });
                 },
                 resetScanner() {
+                    window.location.reload();
                     this.qrCode = '';
                     this.$wire.set('qrData', null);
                     if (!this.isScanning) {

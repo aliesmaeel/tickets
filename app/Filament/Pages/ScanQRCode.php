@@ -24,6 +24,7 @@ class ScanQRCode extends Page
     public $price;
     public $event_start_time;
 
+    public $isVerified = false;
     protected $listeners = ['autoVerify' => 'setQrData'];
 
     public function setQrData($data)
@@ -41,6 +42,7 @@ class ScanQRCode extends Page
 
     public function verifyScan()
     {
+        $this->isVerified = false;
         try {
             if (preg_match('/\d+/', $this->qrData, $matches)) {
                 $number = $matches[0];
@@ -52,7 +54,9 @@ class ScanQRCode extends Page
             }else{
                 $ticket=$ticket->load(['event', 'orderSeat.eventSeat', 'customer']);
             }
-
+            if($ticket->order->reservation_type ==='Cache' && $ticket->order->reservation_status == false){
+                throw ValidationException::withMessages(['qrData' => 'The Order is not Placed yet.']);
+            }
 
             $this->event = $ticket->event->name['en'] ;
             $this->row = $ticket->orderSeat->eventSeat->row;
@@ -62,9 +66,6 @@ class ScanQRCode extends Page
             $this->event_start_time = $ticket->event->start_time;
 
             if ($ticket->status !== 'upcoming') {
-
-
-
                 Notification::make()
                     ->title("Ticket Status Issue")
                     ->body("Ticket #{$ticket->id} is not in 'upcoming' status. Current status: {$ticket->status}")
@@ -72,6 +73,8 @@ class ScanQRCode extends Page
                     ->send();
                 return;
             }
+            $this->isVerified = true;
+
 
             Notification::make()
                 ->title("Ticket Verified")

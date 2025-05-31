@@ -95,7 +95,7 @@ class EventResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('max_cache_orders')
                     ->label('Max Cache Orders')
-                    ->helperText('Maximum number of cache orders allowed for this event.')
+                    ->helperText('Maximum cache orders per customer for this event.')
                     ->numeric()
                     ->minValue(0)
                     ->default(100)

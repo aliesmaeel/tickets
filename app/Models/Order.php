@@ -21,6 +21,7 @@ class Order extends Model
         'base_price',
         'reservation_type',
         'reservation_status',
+        'discount_wallet_value',
     ];
 
     public function customer()

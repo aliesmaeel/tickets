@@ -7,6 +7,6 @@ class PaymentService
     public static function charge($amount)
     {
 
-        return $amount <= 20;
+        return false;
     }
 }
