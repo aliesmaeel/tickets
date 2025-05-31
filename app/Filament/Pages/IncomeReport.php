@@ -74,6 +74,7 @@ class IncomeReport extends Page implements Tables\Contracts\HasTable
                 ->options([
                     'Epay' => 'Epay',
                     'Cache' => 'Cache',
+                    'Wallet'=> 'Wallet'
                 ]),
 
             Tables\Filters\Filter::make('created_at')

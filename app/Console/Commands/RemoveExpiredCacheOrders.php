@@ -24,7 +24,7 @@ class RemoveExpiredCacheOrders extends Command
             })
             ->get()
             ->filter(function ($order) {
-                return $order->created_at->addMinutes($order->event->time_to_place_cache_order)->lt(now());
+                return $order->created_at->addHours($order->event->time_to_place_cache_order)->lt(now());
             });
 
 
@@ -33,7 +33,11 @@ class RemoveExpiredCacheOrders extends Command
 
             // Set seat status to available
             EventSeat::whereIn('id', $seatIds)->update(['status' => 'Available']);
-
+            $customer = $order->customer;
+            $customer->wallet->increment('balance', $order->discount_wallet_value);
+            if($order->discount_coupon) {
+                $order->coupon->decrement('used_count');
+            }
             // Delete the order
             $order->delete();
         }

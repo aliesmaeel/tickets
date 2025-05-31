@@ -72,7 +72,7 @@ class CustomerProfileController extends Controller
         if($request->hasFile('image')) {
             $file = $request->file('image');
             $path = $file->store('images', 'customers');
-            $customer->image = '/storage/customers/'.$path;
+            $customer->image = '/'.$path;
         }
 
         $customer->save();

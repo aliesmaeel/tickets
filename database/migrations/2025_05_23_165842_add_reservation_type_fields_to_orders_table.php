@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->enum('reservation_type', ['Epay','Cache']);
+            $table->enum('reservation_type', ['Epay','Cache','Wallet']);
             $table->boolean('reservation_status')->default(false);
         });
     }

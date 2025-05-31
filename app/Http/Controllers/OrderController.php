@@ -28,6 +28,16 @@ class OrderController extends Controller
     {
         App::setLocale(auth()->user()->lang);
 
+        $customerHasMoreThanOneCacheOrder = Order::where('customer_id', auth()->id())
+            ->where('reservation_type', 'Cache')
+            ->where('reservation_status', true)
+            ->where('event_id', $request->event_id)
+            ->exists();
+
+        if ($customerHasMoreThanOneCacheOrder){
+            return $this->respondError(__('messages.max_allowed_cache_orders_reached'), null, 422);
+        }
+
         $request->validate([
             'seats' => 'required|array|min:1',
             'seats.*' => 'required|integer|exists:event_seats,id',
@@ -80,6 +90,7 @@ class OrderController extends Controller
             $wallet = $customer->wallet;
             $walletMoney = $wallet->balance;
             $walletCanCover = WalletHelper::checkWalletHasEnoughMoney($wallet, $priceAfterDiscount);
+
             $reservationStatus = false;
             $reservationType = $request->reservation_type;
 
@@ -96,12 +107,14 @@ class OrderController extends Controller
                 }
             } else {
                 if ($reservationType === 'Epay') {
+
                     if ($walletCanCover) {
                         $discountFromWallet = $priceAfterDiscount;
                         $wallet->decrement('balance', $discountFromWallet);
                         $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
                         $reservationStatus = true;
                         $reservationType = 'Wallet';
+
                     } else {
                         $discountFromWallet = $walletMoney;
                         $remaining = $priceAfterDiscount - $walletMoney;
@@ -116,6 +129,7 @@ class OrderController extends Controller
                     }
                 } elseif ($reservationType === 'Cache') {
                     if ($walletCanCover) {
+
                         $discountFromWallet = $priceAfterDiscount;
                         $wallet->decrement('balance', $discountFromWallet);
                         $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
@@ -123,7 +137,7 @@ class OrderController extends Controller
                         $reservationType = 'Wallet';
                     } else {
                         $discountFromWallet = $walletMoney;
-                        $wallet->decrement('money', $walletMoney);
+                        $wallet->decrement('balance', $walletMoney);
                     }
                 }
             }
@@ -135,7 +149,7 @@ class OrderController extends Controller
                 'base_price' => $basePrice,
                 'money_to_point_rate' => Setting::getRate('money_to_point_rate'),
                 'coupon_id' => $coupon?->id,
-                'discount_value' => $discount,
+                'discount_coupon' => $discount,
                 'discount_wallet_value' => $discountFromWallet,
                 'reservation_type' => $reservationType,
                 'reservation_status' => $reservationStatus,
@@ -167,7 +181,7 @@ class OrderController extends Controller
                 'data' => [
                     'order_id' => $order->id,
                     'base_price' => $basePrice,
-                    'discount' => $discount,
+                    'discount_coupon' => $discount,
                     'total_price' => $priceAfterDiscount,
                     'discount_wallet_value' => $discountFromWallet,
                     'reservation_type' => $reservationType,

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('discount_coupon', 10, 2)->default(0);
+            $table->decimal('discount_wallet_value', 10, 2)->nullable();
+
         });
 
     }
