@@ -88,7 +88,7 @@ class EventResource extends Resource
                     ->required(),
                Forms\Components\TextInput::make('time_to_place_cache_order')
                     ->label('Time to Place Cache Order')
-                    ->helperText('Time in minutes So Customers can place the order.')
+                    ->helperText('Time in Hours So Customers can place the order.')
                     ->numeric()
                     ->minValue(0)
                     ->default(60)
