@@ -2,9 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Setting;
 use App\Models\Ticket;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\View\View;
 
@@ -13,6 +15,7 @@ class ScanQRCode extends Page
     protected static ?string $navigationIcon = 'heroicon-o-camera';
     protected static string $view = 'filament.pages.scan-q-r-code';
 
+    protected static ?string $title = 'Scan QR Code';
     public $qrData = null;
     public $event;
     public $row;
@@ -43,7 +46,13 @@ class ScanQRCode extends Page
                 $number = $matches[0];
             }
             $this->qrData=$number;
-            $ticket = Ticket::find($this->qrData)->load(['event', 'order', 'orderSeat.eventSeat', 'customer','event.seatClasses']);
+            $ticket = Ticket::find($this->qrData);
+            if (!$ticket) {
+                throw ValidationException::withMessages(['qrData' => 'Ticket not found.']);
+            }else{
+                $ticket=$ticket->load(['event', 'orderSeat.eventSeat', 'customer']);
+            }
+
 
             $this->event = $ticket->event->name['en'] ;
             $this->row = $ticket->orderSeat->eventSeat->row;

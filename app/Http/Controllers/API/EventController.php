@@ -47,23 +47,15 @@ class EventController extends Controller
 
         try {
             $events = Event::with(['category', 'city'])
-                ->whereHas('category', function ($query) use ($category_id) {
-                    $query->where('status', 1)
-                        ->when($category_id, function ($query) use ($category_id) {
-                            if (is_array($category_id)) {
-                                $query->whereIn('id', $category_id);
-                            } else {
-                                $query->where('id', $category_id);
-                            }
-                        });
+                ->when(!empty($category_id), function ($query) use ($category_id) {
+                    $query->whereHas('category', function ($query) use ($category_id) {
+                        $query->where('status', 1)
+                            ->whereIn('id', $category_id);
+                    });
                 })
-                ->whereHas('city', function ($query) use ($city_id) {
-                    $query->when($city_id, function ($query) use ($city_id) {
-                        if (is_array($city_id)) {
-                            $query->whereIn('id', $city_id);
-                        } else {
-                            $query->where('id', $city_id);
-                        }
+                ->when(!empty($city_id), function ($query) use ($city_id) {
+                    $query->whereHas('city', function ($query) use ($city_id) {
+                        $query->whereIn('id', $city_id);
                     });
                 })
                 ->when($start_date, function ($query) use ($start_date) {
@@ -84,6 +76,7 @@ class EventController extends Controller
                 })
                 ->orderBy('id', 'desc')
                 ->paginate($limit, ['*'], 'page', $page);
+
 
 
             $eventsResource = [
