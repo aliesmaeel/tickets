@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/respo.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{asset('assets/images/logo.png')}}">
+    <link rel="icon" type="image/x-icon" href="{{asset('assets/images/Logo.svg')}}">
 
 
 
@@ -15,7 +15,7 @@
 <div class="nav">
     <div class="content flex_lng">
         <a href="#">
-            <img src="{{asset('assets/images/logo.png')}}">
+            <img src="{{asset('assets/images/Logo.svg')}}">
         </a>
     </div>
 </div>
@@ -29,7 +29,7 @@
             <div class="btns flex_lng">
                 <a href="#">
                     <div>
-                        <img src="{{asset('assets/images/google-play.png')}}">
+                        <img src="{{asset('assets/images/googlePlay.svg')}}">
                     </div>
                     <div class="flex-col">
                         <div>GET IT ON</div>
@@ -40,7 +40,7 @@
                 </a>
                 <a href="#">
                     <div>
-                        <img src="{{asset('assets/images/apple-inc.png')}}">
+                        <img src="{{asset('assets/images/appStore.svg')}}">
                     </div>
                     <div class="flex-col">
                         <div>Download on the</div>
