@@ -5,8 +5,20 @@ use App\Http\Controllers\SeatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('/admin/login');
+    return view('welcome');
+
 });
+
+
+Route::get('/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'ar', 'kur']))
+    {
+        session(['locale' => $locale]);
+        \Illuminate\Support\Facades\App::setLocale($locale);
+    }
+    return view('welcome');
+});
+
 
 
 Route::middleware(['web', 'auth'])->group(function () {

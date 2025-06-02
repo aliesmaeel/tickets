@@ -38,5 +38,7 @@ return [
     'points_converted_successfully' => 'Points converted successfully',
     'something_went_wrong' => 'Something went wrong',
     'max_allowed_cache_orders_reached' => 'You have reached the maximum allowed cache orders',
-
+    'skip_the_line' => 'Skip the line and get',
+    'straight_to_the_fun' => 'straight to the fun',
+    'your_event' => 'With TICKDOT your next concert, festival, or show is just a tap away. Find the best events around you, reserve your seat, and get your digital e-ticket instantly. All in one sleek app.'
 ];
