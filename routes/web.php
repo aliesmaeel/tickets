@@ -2,6 +2,7 @@
 
 use App\Filament\Pages\CreateEventSeatsGrid;
 use App\Http\Controllers\SeatController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,7 +15,7 @@ Route::get('/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'ar', 'kur']))
     {
         session(['locale' => $locale]);
-        \Illuminate\Support\Facades\App::setLocale($locale);
+        App::setLocale($locale);
     }
     return view('welcome');
 });
