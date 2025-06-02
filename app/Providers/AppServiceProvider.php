@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\EventSeat;
 use App\Models\SeatClass;
 use App\Observers\GenerateDefaultSeatsObserver;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         SeatClass::observe(GenerateDefaultSeatsObserver::class);
+        App::setLocale(session('locale', config('app.locale')));
+
 
     }
 
