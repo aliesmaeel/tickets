@@ -15,17 +15,34 @@ class TicketController extends Controller
     {
         $filter = $request->input('filter', 'upcoming');
         $customerId = auth()->id();
-        $tickets = Ticket::with(['event','orderSeat.eventSeat.seatClass'])
+
+        $tickets = Ticket::with(['event', 'orderSeat.eventSeat.seatClass'])
             ->where('customer_id', $customerId)
             ->where('status', $filter)
-            ->get();
+            ->paginate(10);
 
 
+        $ticketResource=[
+          'data'=> TicketResource::collection($tickets->items())->resolve(),
+            'meta' => [
+                'current_page' => $tickets->currentPage(),
+                'last_page' => $tickets->lastPage(),
+                'per_page' => $tickets->perPage(),
+                'total' => $tickets->total(),
+            ],
+            'links' => [
+                'first' => $tickets->url(1),
+                'last' => $tickets->url($tickets->lastPage()),
+                'prev' => $tickets->previousPageUrl(),
+                'next' => $tickets->nextPageUrl(),
+            ]
+        ];
         return $this->respondValue(
-            TicketResource::collection($tickets),
+            $ticketResource,
             'Tickets retrieved successfully'
         );
     }
+
 
     public function scanTicket(Request $request)
     {
