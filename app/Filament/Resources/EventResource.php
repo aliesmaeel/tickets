@@ -86,13 +86,15 @@ class EventResource extends Resource
                     ->required(),
                 Forms\Components\DateTimePicker::make('display_end_date')
                     ->required(),
-               Forms\Components\TextInput::make('time_to_place_cache_order')
+                Forms\Components\TextInput::make('time_to_place_cache_order')
                     ->label('Time to Place Cache Order')
-                    ->helperText('Time in Hours So Customers can place the order.')
+                    ->helperText('Time in Hours so customers can place the order.')
                     ->numeric()
                     ->minValue(0)
-                    ->default(60)
+                    ->formatStateUsing(fn ($state) => $state ? round($state / 60, 2) : null)
+                    ->dehydrateStateUsing(fn ($state) => $state ? $state * 60 : null)
                     ->required(),
+
                 Forms\Components\TextInput::make('max_cache_orders')
                     ->label('Max Cache Orders')
                     ->helperText('Maximum cache orders per customer for this event.')
