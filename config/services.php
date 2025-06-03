@@ -38,4 +38,9 @@ return [
     'standingtech' => [
         'token' => env('STANDINGTECH_API_TOKEN'),
     ],
+
+    'fcm' => [
+        'credentials' => env('FCM_CREDENTIALS'),
+    ],
+
 ];
