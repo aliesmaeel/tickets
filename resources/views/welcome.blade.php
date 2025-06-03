@@ -58,7 +58,7 @@
 
     </div>
 </div>
-<div class="footer">
+<div class="footer" dir="ltr">
     <div class="content">
         <div class="first_col">
             <div>Follow us</div>
