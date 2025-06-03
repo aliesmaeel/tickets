@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" @if(app()->getLocale()=='ar') dir="rtl" @endif>
+<html lang="en" @if(app()->getLocale()=='ar' || app()->getLocale()=='kur') dir="rtl" @endif>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,7 +75,7 @@
         <div class="first_col">
             <div>Contact us</div>
             <a href="#" class="line">+974 000 000-00000</a>
-            <a href="#" class="line">tickdot@info.com</a>
+            <a href="#" class="line">tick@dot-iq.net</a>
 
         </div>
         <div class="switch_lang">
