@@ -29,12 +29,6 @@ class TicketController extends Controller
                 'last_page' => $tickets->lastPage(),
                 'per_page' => $tickets->perPage(),
                 'total' => $tickets->total(),
-            ],
-            'links' => [
-                'first' => $tickets->url(1),
-                'last' => $tickets->url($tickets->lastPage()),
-                'prev' => $tickets->previousPageUrl(),
-                'next' => $tickets->nextPageUrl(),
             ]
         ];
         return $this->respondValue(
