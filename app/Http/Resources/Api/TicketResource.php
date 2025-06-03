@@ -25,6 +25,7 @@ class TicketResource extends JsonResource
             'row' => $this->orderSeat?->eventSeat?->row,
             'col' => $this->orderSeat?->eventSeat?->col,
             'ticketType' => $this->orderSeat?->eventSeat?->seatClass?->name,
+            'seatColor' => $this->orderSeat?->eventSeat?->seatClass?->color,
             'price' => $this->orderSeat?->eventSeat?->seatClass?->price,
             'place_order_time_left' => (int) max(0, now()->diffInMinutes($this->created_at->addMinutes($this->event?->time_to_place_cache_order), false))+1,
 
