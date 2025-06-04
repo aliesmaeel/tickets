@@ -19,6 +19,7 @@ class TicketResource extends JsonResource
             'id' => $this->id,
             'status' => $this->status,
             'event_name' => $this->event?->name[$userLang],
+            'event_image' => url('storage/'.$this->event?->image),
             'address' => $this->event?->address[$userLang],
             'date' => optional($this->event?->start_time)->format('Y-m-d'),
             'time' => optional($this->event?->start_time)->format('H:i') . ' - ' . optional($this->event?->end_time)->format('H:i'),
@@ -28,6 +29,8 @@ class TicketResource extends JsonResource
             'seatColor' => $this->orderSeat?->eventSeat?->seatClass?->color,
             'price' => $this->orderSeat?->eventSeat?->seatClass?->price,
             'place_order_time_left' => (int) max(0, now()->diffInMinutes($this->created_at->addMinutes($this->event?->time_to_place_cache_order), false))+1,
+            'reservation_status' => $this->order?->reservation_status,
+            'reservation_type' => $this->order?->reservation_type,
 
         ];
     }
