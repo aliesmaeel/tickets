@@ -51,6 +51,7 @@ jobs:
 
             php artisan migrate --force
             php artisan db:seed
+            php artisan permissions:sync
 
             php artisan config:cache
             php artisan route:cache

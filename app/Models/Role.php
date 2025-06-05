@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role as SpatieRole;
 
-class Role extends \Spatie\Permission\Models\Role
+class Role extends SpatieRole
 {
+
 
     /**
      * The attributes that should be cast.

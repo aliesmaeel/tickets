@@ -12,10 +12,16 @@ class RefreshDatabaseWithPermissions extends Command
     public function handle()
     {
         $this->info('Refreshing database...');
-        $this->call('migrate:fresh', ['--seed' => true]);
+        $this->call('migrate:fresh');
 
         $this->info('Syncing permissions...');
         $this->call('permissions:sync');
+
+        $this->info('Refreshing database...');
+        $this->call('db:seed', [
+            '--class' => 'DatabaseSeeder',
+            '--force' => true,
+        ]);
 
         $this->info('✅ Done!');
 

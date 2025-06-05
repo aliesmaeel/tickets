@@ -142,7 +142,7 @@ return [
 
         'guard_names' => [
             'web',
-            'api',
+//            'api',
         ],
 
         'permission_affixes' => [
@@ -156,13 +156,12 @@ return [
             'createPermission' => 'create',
             'updatePermission' => 'update',
             'deletePermission' => 'delete',
-            'deleteAnyPermission' => 'delete-any',
-            'replicatePermission' => 'replicate',
-            'restorePermission' => 'restore',
-            'restoreAnyPermission' => 'restore-any',
-            'reorderPermission' => 'reorder',
             'forceDeletePermission' => 'force-delete',
-            'forceDeleteAnyPermission' => 'force-delete-any',
+            'restorePermission' => 'restore',
+            'printPermission' => 'print',
+            'importPermission' => 'import',
+            'exportPermission' => 'export',
+
         ],
 
         /*
