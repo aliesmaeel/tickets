@@ -88,4 +88,9 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
+
+//    public static function canViewAny(): bool
+//    {
+//        return auth()->user()->isDeveloper();
+//    }
 }

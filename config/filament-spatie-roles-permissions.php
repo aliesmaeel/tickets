@@ -3,8 +3,8 @@
 return [
 
     'resources' => [
-        'PermissionResource' => \Althinect\FilamentSpatieRolesPermissions\Resources\PermissionResource::class,
-        'RoleResource' => \Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource::class,
+        'PermissionResource' => \App\Filament\Resources\PermissionResource::class,
+        'RoleResource' => \App\Filament\Resources\RoleResource::class,
     ],
 
     'preload_roles' => true,
@@ -12,7 +12,6 @@ return [
     'preload_permissions' => true,
 
     'navigation_section_group' => 'filament-spatie-roles-permissions::filament-spatie.section.roles_and_permissions', // Default uses language constant
-
 
     'team_model' => \App\Models\Team::class,
 
@@ -156,12 +155,13 @@ return [
             'createPermission' => 'create',
             'updatePermission' => 'update',
             'deletePermission' => 'delete',
-            'forceDeletePermission' => 'force-delete',
+            'deleteAnyPermission' => 'delete-any',
+            'replicatePermission' => 'replicate',
             'restorePermission' => 'restore',
-            'printPermission' => 'print',
-            'importPermission' => 'import',
-            'exportPermission' => 'export',
-
+            'restoreAnyPermission' => 'restore-any',
+            'reorderPermission' => 'reorder',
+            'forceDeletePermission' => 'force-delete',
+            'forceDeleteAnyPermission' => 'force-delete-any',
         ],
 
         /*

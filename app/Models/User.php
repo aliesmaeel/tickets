@@ -51,4 +51,9 @@ class User extends Authenticatable
     }
 
 
+    public function isDeveloper(): bool
+    {
+        return in_array($this->email, config('app.developers', []));
+    }
+
 }
