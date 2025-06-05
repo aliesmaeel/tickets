@@ -50,8 +50,8 @@ jobs:
             php artisan cache:clear
 
             php artisan migrate --force
-            php artisan db:seed
             php artisan permissions:sync
+            php artisan db:seed
 
             php artisan config:cache
             php artisan route:cache
