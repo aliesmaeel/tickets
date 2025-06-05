@@ -21,5 +21,26 @@ class UserSeeder extends Seeder
            ]);
 
         $superAdmin->assignRole('super-admin');
+
+
+        $superAdminDevelperMajd =  User::updateOrCreate(
+            [
+                'email' => 'majd@gmail.com',
+            ],
+            [  'name' => 'Majd',
+                'password' => bcrypt('password')
+            ]);
+        $superAdminDevelperMajd->assignRole('super-admin');
+
+
+        $superAdminDevelperMajd =  User::updateOrCreate(
+            [
+                'email' => 'ali@gmail.com',
+            ],
+            [  'name' => 'Ali',
+                'password' => bcrypt('password')
+            ]);
+        $superAdminDevelperMajd->assignRole('super-admin');
+
     }
 }
