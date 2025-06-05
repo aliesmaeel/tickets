@@ -67,5 +67,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make()
 
             ]);
+
+        //->canViewAny(fn () => auth()->user()->isDeveloper()),
     }
 }
