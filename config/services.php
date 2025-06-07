@@ -40,7 +40,8 @@ return [
     ],
 
     'fcm' => [
-        'credentials' => env('FCM_CREDENTIALS'),
+        'project_id' => env('FCM_PROJECT_ID', ''),
+        'credentials_file_path' => env('FCM_CREDENTIALS_FILE_PATH', ''), // It must be added to /storage/app folder
     ],
 
 ];
