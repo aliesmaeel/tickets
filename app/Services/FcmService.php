@@ -187,7 +187,7 @@ class FcmService
             }
 
             $fcmDto = new FcmDto(
-                receivers: new FcmReceiverDto(id: 1, type: UserType::Student->value),
+                receivers: new FcmReceiverDto(id: 1, type: UserType::Customer->value),
                 title: $validated['title'],
                 subtitle: $validated['subtitle'] ?? '',
                 body: $validated['body'] ?? '',
