@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -37,4 +38,10 @@ class Customer extends Authenticatable
     {
         return $this->fcm_token;
     }
+
+    public function fcmTokens(): MorphMany
+    {
+        return $this->morphMany(FcmToken::class, 'userable');
+    }
+
 }

@@ -12,8 +12,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\EventController;
-
+use App\Http\Controllers\API\NotificationController;
 use  App\Traits\ApiResponse;
+use App\Http\Controllers\FcmController;
 
 Route::fallback(function () {
     return response(
@@ -52,6 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get-my-tickets', [TicketController::class, 'getTickets']);
     Route::post('/scan-ticket', [TicketController::class, 'scanTicket']);
     Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
+   // Route::put('/customer/fcm-token', [FcmController::class, 'updateDeviceToken'])->name('customer.fcm-token.update');
+
 });
+
+Route::post('notifications/send', [NotificationController::class, 'sendTestPushNotification'])->name('notification.send');
+
+
 
 
