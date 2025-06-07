@@ -57,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-Route::post('notifications/send', [NotificationController::class, 'sendTestPushNotification'])->name('notification.send');
+Route::post('/notifications/send', [NotificationController::class, 'sendTestPushNotification'])->name('notification.send');
 
 
 
