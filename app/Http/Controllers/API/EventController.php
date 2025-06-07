@@ -27,7 +27,7 @@ class EventController extends Controller
         $city_id = $request->input('city_id') ?? null;
         $start_date = $request->input('start_date') ?? null;
         $end_date = $request->input('end_date') ?? null;
-        App::setLocale(Auth::user('customer')->lang);
+        App::setLocale($request->lang ?? 'en');
         // make validation on inputs
         $validator = Validator::make($request->all(), [
             'page' => 'integer|min:1',
@@ -95,11 +95,11 @@ class EventController extends Controller
         }
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
         try {
 
-            App::setLocale(Auth::user('customer')->lang);
+            App::setLocale($request->lang ?? 'en');
 
             $event = Event::with(['category', 'city'])
                 ->where('id', $id)

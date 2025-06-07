@@ -18,9 +18,10 @@ class CategoryController extends Controller
     public function getCategories(Request $request)
     {
         try {
-            App::setLocale(Auth::user('customer')->lang);
+            App::setLocale($request->lang ?? 'en');
 
             $categories = CategoryResource::collection(Category::all());
+
             return $this->respondValue(
                 $categories,
                 __('messages.categories_retrieved_successfully'),
