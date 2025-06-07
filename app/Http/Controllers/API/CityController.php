@@ -17,7 +17,7 @@ class CityController extends Controller
 
     public function getCities(Request $request)
     {
-        App::setLocale(Auth::user()->lang ?? 'en');
+        App::setLocale($request->lang ?? 'en');
 
         try {
             $cities = CityResource::collection(City::all());

@@ -27,6 +27,10 @@ Route::fallback(function () {
 });
 
 Route::post('/customers/ads', [AdvertisementsController::class, 'getAds']);
+Route::get('/customers/categories', [CategoryController::class, 'getCategories']);
+Route::get('/customers/cities', [CityController::class, 'getCities']);
+Route::post('/events', [EventController::class, 'index']);
+Route::get('/events/{id}', [EventController::class, 'show']);
 
 
 Route::prefix('customers')->controller(CustomerAuthController::class)->group(function () {
@@ -41,20 +45,13 @@ Route::prefix('customers')->controller(CustomerAuthController::class)->group(fun
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customers/profile', [CustomerProfileController::class, 'getProfile']);
     Route::post('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
-    Route::get('/customers/categories', [CategoryController::class, 'getCategories']);
-    Route::get('/customers/cities', [CityController::class, 'getCities']);
     Route::put('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
-    Route::post('/events', [EventController::class, 'index']);
-    Route::get('/events/{id}', [EventController::class, 'show']);
-
-    Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
     Route::post('/orders', [OrderController::class, 'createOrder']);
     Route::post('/apply-coupon', [CouponController::class, 'apply']);
     Route::post('/wallet/convert-points', [WalletController::class, 'convertPointsToMoney']);
-
     Route::get('/get-my-tickets', [TicketController::class, 'getTickets']);
     Route::post('/scan-ticket', [TicketController::class, 'scanTicket']);
-
+    Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
 });
 
 
