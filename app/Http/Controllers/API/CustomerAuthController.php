@@ -68,11 +68,12 @@ class CustomerAuthController extends Controller
     {
             App::setLocale($request->lang ?? 'en');
 
-            $data = $request->only('recipient', 'code');
+            $data = $request->only('recipient', 'code', 'fcm_token');
 
             $validator = Validator::make($data, [
                 'recipient' => 'required',
                 'code' => 'required',
+                'fcm_token' => 'required|string',
             ]);
 
             if ($validator->fails()) {
@@ -102,6 +103,7 @@ class CustomerAuthController extends Controller
             cache()->forget("otp:{$data['recipient']}");
             cache()->forget("register:{$data['recipient']}");
 
+            $this->updateDeviceToken($data['fcm_token'], $customer);
 
             $token = $customer->createToken('auth_token')->plainTextToken;
 
