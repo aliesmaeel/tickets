@@ -47,8 +47,8 @@ class CategoryResource extends  BaseResource
                     ->getStateUsing(function ($record) {
                         return $record->name['en'] ?? $record->name;
                     }),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
+                Tables\Columns\IconColumn::make('status')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
