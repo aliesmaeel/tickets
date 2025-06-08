@@ -33,18 +33,6 @@ class CategoryResource extends  BaseResource
                             ->required()
                             ->maxLength(255)
                     ])->locales(['en', 'ar','kur']),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->reactive()
-                    ->placeholder('This should be unique')
-                    ->unique(Category::class, 'slug', fn ($record) => $record)
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        $set('slug', \Illuminate\Support\Str::slug($state));
-                    }),
-
-                Forms\Components\FileUpload::make('image')
-                    ->image(),
                 Forms\Components\Toggle::make('status')
                     ->required(),
             ]);
