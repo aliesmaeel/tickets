@@ -28,6 +28,7 @@ class Event extends Model
         'type',
         'max_cache_orders',
         'time_to_place_cache_order',
+        'is_notified'
     ];
 
     protected $casts = [
