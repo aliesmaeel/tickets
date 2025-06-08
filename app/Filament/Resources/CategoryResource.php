@@ -49,9 +49,6 @@ class CategoryResource extends  BaseResource
                     }),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
