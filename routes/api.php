@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get-my-tickets', [TicketController::class, 'getTickets']);
     Route::post('/scan-ticket', [TicketController::class, 'scanTicket']);
     Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
-   // Route::put('/customer/fcm-token', [FcmController::class, 'updateDeviceToken'])->name('customer.fcm-token.update');
+    //Route::put('/customer/fcm-token', [FcmController::class, 'updateDeviceToken'])->name('customer.fcm-token.update');
 
 });
 

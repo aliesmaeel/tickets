@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Dtos\Fcm\FcmReceiverDto;
+use App\Enums\UserType;
+use App\Jobs\SendNotificationToAllCustomer;
 use App\Models\Customer;
 use App\Notifications\CustomTextNotification;
 use Filament\Forms\Components\Textarea;
@@ -49,16 +52,41 @@ class Notifications extends Page
     {
         $data = $this->form->getState();
 
-        NotificationFacade::send(
-            Customer::whereNotNull('fcm_token')->get(),
-            new CustomTextNotification($data['notificationTitle'], $data['message'])
+        $fcmReceivers = [];
+
+        $customers  = Customer::all();
+
+        foreach ($customers as $customer) {
+            $fcmReceivers[] = FcmReceiverDto::make(
+                id: $customer->id,
+                type: UserType::Customer->value
+            );
+        }
+
+
+        $title = $data['notificationTitle'] ?? 'New Event Available';
+        $body = $data['message'] ?? 'Check out the latest event available for you.';
+        $subtitle = 'New Event Notification';
+
+        SendNotificationToAllCustomer::dispatchSync(
+            receivers: $fcmReceivers,
+            title: $title,
+            message: $body,
+            subtitle: $subtitle,
+            type: 'general_notification'
         );
 
-        Notification::make()
-            ->title('Notification Sent')
-            ->body('Your message has been sent to all customers.')
-            ->success()
-            ->send();
+
+//        NotificationFacade::send(
+//            Customer::whereNotNull('fcm_token')->get(),
+//            new CustomTextNotification($data['notificationTitle'], $data['message'])
+//        );
+//
+//        Notification::make()
+//            ->title('Notification Sent')
+//            ->body('Your message has been sent to all customers.')
+//            ->success()
+//            ->send();
 
         $this->form->fill([
             'notificationTitle' => '',
