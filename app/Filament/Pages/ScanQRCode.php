@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use App\Models\Ticket;
+use App\Support\StaticPermissions;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -122,6 +123,11 @@ class ScanQRCode extends Page
                 ->danger()
                 ->send();
         }
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can(StaticPermissions::SCAN_QR_CODE);
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\SeatClass;
+use App\Support\StaticPermissions;
 use Filament\Pages\Page;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -10,6 +11,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Models\Event;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class CreateEventSeatsGrid extends Page implements HasForms
 {
@@ -56,6 +58,11 @@ class CreateEventSeatsGrid extends Page implements HasForms
         return Event::whereDoesntHave('seats')->get()->mapWithKeys(function ($event) {
             return [$event->id => $event->name['en'] ?? $event->name];
         })->toArray();
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can(StaticPermissions::CREATE_EVENT_SEATS_GRID);
     }
 
 

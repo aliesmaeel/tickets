@@ -7,12 +7,14 @@ use App\Enums\UserType;
 use App\Jobs\SendNotificationToAllCustomer;
 use App\Models\Customer;
 use App\Notifications\CustomTextNotification;
+use App\Support\StaticPermissions;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class Notifications extends Page
@@ -103,4 +105,10 @@ class Notifications extends Page
                 ->color('primary'),
         ];
     }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can(StaticPermissions::SEND_TEXT_NOTIFICATION);
+    }
+
 }

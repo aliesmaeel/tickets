@@ -1,6 +1,7 @@
 <?php
 namespace App\Filament\Pages;
 
+use App\Support\StaticPermissions;
 use Filament\Pages\Page;
 use Filament\Forms;
 use Filament\Tables;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\Select;
 use App\Models\Order;
 use App\Models\Event;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use function Laravel\Prompts\alert;
 
 class IncomeReport extends Page implements Tables\Contracts\HasTable
@@ -94,6 +96,11 @@ class IncomeReport extends Page implements Tables\Contracts\HasTable
     protected function getTableHeading(): string
     {
         return 'Income / Profit Table';
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can(StaticPermissions::INCOME_REPORT);
     }
 }
 
