@@ -2,7 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Support\StaticPermissions;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class EditEventSeatsGrid extends Page
 {
@@ -22,11 +24,16 @@ class EditEventSeatsGrid extends Page
         return false; // Hides it from the sidebar
     }
 
-    
+
     public function mount(): void
     {
         $this->event_id = request()->get('event_id');
 
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can(StaticPermissions::EDIT_EVENT_SEATS_GRID);
     }
 
 }

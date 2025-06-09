@@ -3,8 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Models\Event;
+use App\Support\StaticPermissions;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class ViewEventSeats extends Page
 {
@@ -31,5 +33,10 @@ class ViewEventSeats extends Page
             });
 
         return $event;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can(StaticPermissions::VIEW_EVENT_SEATS);
     }
 }
