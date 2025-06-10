@@ -36,13 +36,17 @@ class SeatClassResource extends Resource
                             column1: 'name',
                             column2: 'event_id',
                             value2: $get('event_id'),
-                            ignoreId: $record?->id, // null for create, id for edit
+                            ignoreId: $record?->id,
                         ),
-                    ]),
+                    ])
+                    ->disabled(fn (?SeatClass $record) => $record?->name === 'stage')
+                    ->dehydrated(fn (?SeatClass $record) => $record?->name !== 'stage'),
+
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('$')
+                    ->disabled(fn (?SeatClass $record) => $record?->name === 'stage'),
 
                 Forms\Components\ColorPicker::make('color')
                     ->required()
@@ -53,6 +57,7 @@ class SeatClassResource extends Resource
                 Forms\Components\Select::make('event_id')
                     ->relationship('event', 'name')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->name['en'] ?? $record->name)
+                    ->disabled(fn (?SeatClass $record) => $record?->name === 'stage')
                     ->required(),
             ]);
     }
@@ -101,7 +106,7 @@ class SeatClassResource extends Resource
 
 
             ->actions([
-                Tables\Actions\EditAction::make()->disabled(fn (SeatClass $record): bool => in_array($record->name, ['empty', 'stage'])),
+                Tables\Actions\EditAction::make()->disabled(fn (SeatClass $record): bool => in_array($record->name, ['empty'])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -132,7 +137,7 @@ class SeatClassResource extends Resource
 
    public static function canEdit(Model $record): bool
    {
-       return parent::canEdit($record) && !in_array($record->name, ['empty', 'stage']);
+       return parent::canEdit($record) && !in_array($record->name, ['empty']);
    }
     public static function canDelete(Model $record): bool
     {
@@ -142,7 +147,7 @@ class SeatClassResource extends Resource
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return parent::getEloquentQuery()
-            ->whereNotIn('name', ['empty', 'stage']);
+            ->whereNotIn('name', ['empty']);
     }
 
 }
