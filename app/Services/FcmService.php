@@ -79,7 +79,6 @@ class FcmService
     {
         $tokens = $fcmTokens->pluck('fcm_token')->toArray();
         $sendMethod = self::prepareSendMethod($tokens, $accessToken);
-
         $extraData = $fcmDto->data ?? [];
 
         if (! empty($extraData)) {

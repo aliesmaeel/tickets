@@ -81,4 +81,17 @@ class CustomerProfileController extends Controller
             'customer' => new CustomerApiResource($customer),
         ]);
     }
+
+    public function deleteProfile(Request $request)
+    {
+
+        $customer = $request->user();
+
+        $customer->is_deleted = true; // Soft delete
+        $customer->deleted_at = now(); // Set the deletion timestamp
+        $customer->is_active = false; // Mark as inactive
+        $customer->save();
+
+        return $this->respondValue(__('messages.profile_deleted_successfully'), null, 200);
+    }
 }
