@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -41,9 +42,14 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Order ID')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('event.name.en')
                     ->numeric()
                     ->sortable(),
@@ -120,6 +126,11 @@ class OrderResource extends Resource
     {
         return false;
     }
+public static function canCreate(): bool
+{
+    return false;
+}
+
     public static function canDeleteAny(): bool
     {
         return false;

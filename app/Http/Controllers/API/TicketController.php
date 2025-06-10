@@ -64,6 +64,26 @@ class TicketController extends Controller
         );
     }
 
-    /// Todo revise jobs
+    public function getTicket(Request $request)
+    {
+        $ticketId = $request->id;
+
+        if (!$ticketId) {
+            return $this->respondError(message: 'Ticket ID is required', statusCode: 400);
+        }
+
+        $ticket = Ticket::with(['event', 'orderSeat.eventSeat.seatClass'])
+            ->where('id', $ticketId)
+            ->first();
+
+        if (!$ticket) {
+            return $this->respondError(message: 'Ticket not found', statusCode: 404);
+        }
+
+        return $this->respondValue(
+            new TicketResource($ticket),
+            'Ticket retrieved successfully'
+        );
+    }
 
 }
