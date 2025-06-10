@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customers/profile', [CustomerProfileController::class, 'getProfile']);
     Route::post('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
     Route::put('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
+    Route::delete('/customers/delete/profile', [CustomerProfileController::class, 'deleteProfile']);
+
     Route::post('/orders', [OrderController::class, 'createOrder']);
     Route::post('/apply-coupon', [CouponController::class, 'apply']);
     Route::post('/wallet/convert-points', [WalletController::class, 'convertPointsToMoney']);

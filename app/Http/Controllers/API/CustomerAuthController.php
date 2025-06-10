@@ -149,6 +149,10 @@ class CustomerAuthController extends Controller
                 return $this->respondError(__('messages.account_not_active'), null, 401);
             }
 
+            if($customer->is_deleted){
+                return $this->respondError(__('messages.account_deleted'), null, 401);
+            }
+
             $this->updateDeviceToken($request->fcm_token, $customer);
             $token = $customer->createToken('auth_token')->plainTextToken;
 

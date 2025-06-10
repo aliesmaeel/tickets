@@ -13,7 +13,7 @@ class Customer extends Authenticatable
 {
     use HasApiTokens,HasFactory,Notifiable;
 
-    protected $fillable = ['name', 'phone', 'password', 'image', 'is_active','lang','birth_date','gender'];
+    protected $fillable = ['name', 'phone', 'password', 'image', 'is_active','lang','birth_date','gender', 'is_deleted', 'deleted_at'];
 
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at'];
 
