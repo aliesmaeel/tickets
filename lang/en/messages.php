@@ -42,4 +42,5 @@ return [
     'straight_to_the_fun' => 'straight to the fun',
     'your_event' => 'With TICKDOT your next concert, festival, or show is just a tap away. Find the best events around you, reserve your seat, and get your digital e-ticket instantly. All in one sleek app.',
     'no_enough_money_card' => 'You do not have enough money in your card',
+    'profile_deleted_successfully' => 'Profile deleted successfully',
 ];
