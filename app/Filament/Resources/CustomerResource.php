@@ -41,7 +41,8 @@ class CustomerResource extends Resource
                     ->image()
                     ->disk('customers')
                     ->directory('customers'),
-                Forms\Components\DatePicker::make('birth_date'),
+                Forms\Components\DatePicker::make('birth_date')
+                ->required(),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
                 Forms\Components\Select::make('lang')

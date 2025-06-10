@@ -113,8 +113,6 @@ class CustomerAuthController extends Controller
                 'token' => $token,
                 'customer' => $customer,
             ], __('messages.customer_registered_successfully'));
-
-
     }
 
     public function login(Request $request)
