@@ -39,7 +39,10 @@ class NotifyCustomersForTomorrowEvent extends Command
             })
             ->where('reservation_status', 1)
             ->select('id', 'customer_id')
-            ->groupBy('id')
+            ->groupBy([
+                'id',
+                'customer_id'
+            ])
             ->get();
 
         if($tomorrowOrders->isEmpty()) {
