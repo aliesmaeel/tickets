@@ -49,15 +49,13 @@ class NotifyCustomersForTomorrowEvent extends Command
             return;
         }
 
-        foreach ($tomorrowOrders as $orderId => $customersIds) {
-
+        foreach ($tomorrowOrders as $order) {
             $fcmReceivers = [];
-            foreach ($customersIds as $customerId) {
-                $fcmReceivers[] = FcmReceiverDto::make(
-                    id: $customerId,
-                    type: UserType::Customer->value
-                );
-            }
+
+            $fcmReceivers[] = FcmReceiverDto::make(
+                id: $order->customer_id,
+                type: UserType::Customer->value
+            );
 
             $title = 'Event Tomorrow';
             $body = 'Don\'t miss out on our event happening tomorrow!';
@@ -69,10 +67,10 @@ class NotifyCustomersForTomorrowEvent extends Command
                 message: $body,
                 subtitle: $subtitle,
                 type: 'tomorrow_event',
-                order_id: $orderId
+                order_id: $order->id
             );
-
         }
+
 
     }
 }
