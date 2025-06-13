@@ -29,14 +29,14 @@ class RemoveExpiredCacheOrders extends Command
 
 
         foreach ($expiredOrders as $order) {
-            $seatIds = $order->seats()->pluck('event_seat_id');
+            $seatIds = $order->seats()?->pluck('event_seat_id');
 
             // Set seat status to available
             EventSeat::whereIn('id', $seatIds)->update(['status' => 'Available']);
             $customer = $order->customer;
-            $customer->wallet->increment('balance', $order->discount_wallet_value);
-            if($order->discount_coupon) {
-                $order->coupon->decrement('used_count');
+            $customer?->wallet?->increment('balance', $order->discount_wallet_value);
+            if($order?->discount_coupon) {
+                $order?->coupon?->decrement('used_count');
             }
             // Delete the order
             $order->delete();
