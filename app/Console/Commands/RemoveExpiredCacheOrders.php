@@ -24,7 +24,7 @@ class RemoveExpiredCacheOrders extends Command
             })
             ->get()
             ->filter(function ($order) {
-                return $order->created_at->addMinutes($order->event->time_to_place_cache_order * 60)->lt(now());
+                return $order->created_at->addMinutes($order->event->time_to_place_cache_order )->lt(now());
             });
 
 
