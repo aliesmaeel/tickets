@@ -3,18 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\FcmToken;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FcmController  extends Controller
 {
-
+    use ApiResponse;
     public function updateDeviceToken(Request $request)
     {
-        $request->validate([
-            'fcm_token' => 'required|string',
+
+
+        $data = $request->only('fcm_token');
+
+        $validator = Validator::make($data, [
+            'fcm_token' =>  'required|string'
         ]);
 
-        $fcm_token = $request->fcm_token;
+        if ($validator->fails()) {
+            return $this->respondValidationErrors($validator->errors()->toArray());
+        }
+
+        $fcm_token = $data['fcm_token'];
 
         $fcmTokens = FcmToken::query()
             ->where('fcm_token', $fcm_token)
@@ -26,7 +36,7 @@ class FcmController  extends Controller
         if ($fcmTokensCount == 1) {
             $token = $fcmTokens->first();
 
-            if ($token->userable_id == auth()->user()->id && $token->userable_type == auth()->user()->getMorphClass()) {
+            if ($token->userable_id == auth()->user()?->id && $token->userable_type == auth()->user()->getMorphClass()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Device token already exists',
