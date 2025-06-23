@@ -74,7 +74,7 @@
         </div>
         <div class="first_col">
             <div>Contact us</div>
-            <a href="#" class="line">+974 000 000-00000</a>
+            <a href="#" class="line">+964 7761444114</a>
             <a href="#" class="line">tick@dot-iq.net</a>
 
         </div>
