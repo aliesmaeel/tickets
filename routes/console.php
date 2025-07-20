@@ -9,6 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('orders:cleanup-expired-cache')->everyMinute();
-Schedule::command('tickets:mark-missed')->twiceDaily();
+Schedule::command('tickets:mark-missed')->everyTwoMinutes();
 Schedule::command('app:notify-customers-to-new-events')->everyThirtyMinutes();
 Schedule::command('app:notify-customers-for-tomorrow-event')->dailyAt('22:00');
