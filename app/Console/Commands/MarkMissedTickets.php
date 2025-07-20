@@ -18,10 +18,17 @@ class MarkMissedTickets extends Command
         $tickets = Ticket::where('status', 'upcoming')
             ->whereHas('event', function ($query) use ($now) {
                 $query->where('end_time', '<', $now);
-            })->get();
+            })->whereHas('order',function ($query) use ($now){
+                $query->where('reservation_status',1);
+            })
+            ->get();
 
 
         logger("Marking missed tickets: " . $tickets->count());
+
+        if($tickets->isEmpty()) {
+            return;
+        }
 
         foreach ($tickets as $ticket) {
             $this->info("Ticket ID: {$ticket->id}, Event End Time: {$ticket->event->end_time}");
