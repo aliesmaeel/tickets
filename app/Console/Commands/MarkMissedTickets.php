@@ -23,12 +23,11 @@ class MarkMissedTickets extends Command
             })
             ->get();
 
-
-        logger("Marking missed tickets: " . $tickets->count());
-
         if($tickets->isEmpty()) {
             return;
         }
+
+        logger("Marking missed tickets: " . $tickets->count());
 
         foreach ($tickets as $ticket) {
             $this->info("Ticket ID: {$ticket->id}, Event End Time: {$ticket->event->end_time}");
