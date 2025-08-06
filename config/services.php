@@ -43,5 +43,13 @@ return [
         'project_id' => env('FCM_PROJECT_ID', ''),
         'credentials_file_path' => env('FCM_CREDENTIALS_FILE_PATH', ''), // It must be added to /storage/app folder
     ],
+    'hyperpay' => [
+        'token' => env('HYPERPAY_TOKEN'),
+        'entity_id' => env('HYPERPAY_ENTITY_ID'),
+        'currency' => env('HYPERPAY_CURRENCY', 'IQD'),
+        'test_url_checkout' => env('HYPERPAY_TEST_URL_CHECKOUT', 'https://test.oppwa.com/v1/checkouts'),
+        'test_url_verify' => env('HYPERPAY_TEST_URL_VERIFY', 'https://eu-test.oppwa.com/v3/query'),
+    ],
+
 
 ];

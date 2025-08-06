@@ -48,8 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
     Route::put('/customers/profile', [CustomerProfileController::class, 'updateProfile']);
     Route::delete('/customers/delete/profile', [CustomerProfileController::class, 'deleteProfile']);
-
-    Route::post('/orders', [OrderController::class, 'createOrder']);
     Route::post('/apply-coupon', [CouponController::class, 'apply']);
     Route::post('/wallet/convert-points', [WalletController::class, 'convertPointsToMoney']);
     Route::get('/get-my-tickets', [TicketController::class, 'getTickets']);
@@ -58,6 +56,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/event-seats/{id}', [EventController::class, 'getEventSeats']);
     Route::put('/customer/fcm-token', [FcmController::class, 'updateDeviceToken'])->name('customer.fcm-token.update');
 
+    Route::post('/orders', [OrderController::class, 'createOrder']);
+    Route::get('/verify-payment/{merchantTransactionId}', [OrderController::class, 'verifyPayment']);
 });
 
 Route::post('/notifications/send', [NotificationController::class, 'sendTestPushNotification'])->name('notification.send');
