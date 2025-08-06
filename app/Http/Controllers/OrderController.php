@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\SeatClass;
 use App\Models\Setting;
 use App\Models\Ticket;
+use App\Services\HyperPayService;
 use App\Services\PaymentService;
 use App\Traits\ApiResponse;
 use Exception;
@@ -17,12 +18,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Milon\Barcode\DNS1D;
 use App\Helpers\WalletHelper;
 class OrderController extends Controller
 {
     use ApiResponse;
+    public function __construct(protected HyperPayService $hyperPayService) {}
 
     public function createOrder(Request $request)
     {
@@ -51,7 +55,8 @@ class OrderController extends Controller
         $coupon = null;
         $discount = 0;
         $discountFromWallet = 0;
-
+        $merchantTransactionId = null;
+        $checkoutId = null;
         if ($request->filled('coupon_code')) {
             $coupon = Coupon::findValidCoupon($request->coupon_code);
             if (!$coupon) {
@@ -97,12 +102,15 @@ class OrderController extends Controller
 
             if (!$request->split_payment) {
                 if ($reservationType === 'Epay') {
-                    if (PaymentService::charge($priceAfterDiscount)) {
-                        $reservationStatus = true;
+                    $merchantTransactionId = uniqid('txn_'). time();
+                    $paymentResponse = PaymentService::charge($priceAfterDiscount, $merchantTransactionId);
+                    if ($paymentResponse['success']) {
+                        $checkoutId = $paymentResponse['id'];
+                        $reservationStatus = false;
                         $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
                     } else {
                         DB::rollBack();
-                        return $this->respondError(__('messages.no_enough_money_card'));
+                        return $this->respondError(__($paymentResponse['message']), null, 422);
                     }
                 }
             } else {
@@ -112,19 +120,22 @@ class OrderController extends Controller
                         $discountFromWallet = $priceAfterDiscount;
                         $wallet->decrement('balance', $discountFromWallet);
                         $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
-                        $reservationStatus = true;
+                        $reservationStatus = false;
                         $reservationType = 'Wallet';
 
                     } else {
                         $discountFromWallet = $walletMoney;
                         $remaining = $priceAfterDiscount - $walletMoney;
-                        if (PaymentService::charge($remaining)) {
+                        $merchantTransactionId = uniqid('txn_'). time();
+                        $paymentResponse = PaymentService::charge($priceAfterDiscount, $merchantTransactionId);
+                        if ($paymentResponse['success']) {
+                            $checkoutId = $paymentResponse['id'];
                             $wallet->decrement('balance', $walletMoney);
                             $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
                             $reservationStatus = true;
                         } else {
                             DB::rollBack();
-                            return $this->respondError(__('messages.no_enough_money_card'));
+                            return $this->respondError(__($paymentResponse['message']), null, 422);
                         }
                     }
                 } elseif ($reservationType === 'Cache') {
@@ -153,6 +164,7 @@ class OrderController extends Controller
                 'discount_wallet_value' => $discountFromWallet,
                 'reservation_type' => $reservationType,
                 'reservation_status' => $reservationStatus,
+                'merchant_transaction_id' => $merchantTransactionId,
             ]);
 
             $order->seats()->attach($seatIds);
@@ -187,6 +199,8 @@ class OrderController extends Controller
                     'reservation_type' => $reservationType,
                     'reservation_status' => $reservationStatus,
                     'wallet_points' => $wallet->points,
+                    'merchant_transaction_id' => $merchantTransactionId,
+                    'checkout_id' => $checkoutId,
                 ],
             ]);
 
@@ -201,7 +215,50 @@ class OrderController extends Controller
         }
     }
 
+    public function verifyPayment(Request $request, $merchantTransactionId)
+    {
+        $data = $this->hyperPayService->verifyPaymentByTransactionId($merchantTransactionId);
 
+        if (!$data || !isset($data['result']['code'])) {
+            Log::warning('Payment verification failed or invalid result', ['data' => $data]);
+            return response()->json(['error' => 'Payment not verified'], 400);
+        }
+
+        $code = $data['result']['code'];
+
+        if ($code === '000.000.100') {
+            $record = $data['records'][0] ?? [];
+
+            $transactionId = $record['id'] ?? null;
+            $paymentType = $record['paymentType'] ?? null;
+            $brand = $record['paymentBrand'] ?? null;
+            $amount = $record['amount'] ?? null;
+            $currency = $record['currency'] ?? null;
+            $statusCode = $record['result']['code'] ?? null;
+            $statusDescription = $record['result']['description'] ?? null;
+
+            Log::info('Payment Verified', compact(
+                'transactionId', 'paymentType', 'brand', 'amount', 'currency', 'statusCode', 'statusDescription'
+            ));
+
+            if ($statusCode === '000.100.110') {
+                $order = Order::where('merchant_transaction_id', $merchantTransactionId)->first();
+                $order?->update(['reservation_status' => true]);
+            }
+
+            return response()->json([
+                'transaction_id' => $transactionId,
+                'payment_type' => $paymentType,
+                'brand' => $brand,
+                'amount' => $amount,
+                'currency' => $currency,
+                'status_code' => $statusCode,
+                'status_description' => $statusDescription,
+            ]);
+        }
+
+        return response()->json(['error' => 'Unexpected result code', 'data' => $data], 400);
+    }
 
 
 

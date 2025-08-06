@@ -22,6 +22,7 @@ class Order extends Model
         'reservation_type',
         'reservation_status',
         'discount_wallet_value',
+        'merchant_transaction_id'
     ];
 
     public function customer()
@@ -47,6 +48,11 @@ class Order extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function OrderSeats()
+    {
+        return $this->hasMany(OrderSeat::class);
     }
 
 }
