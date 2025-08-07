@@ -120,7 +120,7 @@ class OrderController extends Controller
                         $discountFromWallet = $priceAfterDiscount;
                         $wallet->decrement('balance', $discountFromWallet);
                         $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
-                        $reservationStatus = false;
+                        $reservationStatus = true;
                         $reservationType = 'Wallet';
 
                     } else {
@@ -132,7 +132,7 @@ class OrderController extends Controller
                             $checkoutId = $paymentResponse['id'];
                             $wallet->decrement('balance', $walletMoney);
                             $wallet->increment('points', (int)($priceAfterDiscount * Setting::getRate('money_to_point_rate')));
-                            $reservationStatus = true;
+                            $reservationStatus = false;
                         } else {
                             DB::rollBack();
                             return $this->respondError(__($paymentResponse['message']), null, 422);
