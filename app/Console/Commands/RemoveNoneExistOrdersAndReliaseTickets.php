@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Dtos\Fcm\FcmDto;
 use App\Dtos\Fcm\FcmReceiverDto;
+use App\Enums\UserType;
 use App\Http\Controllers\OrderController;
 use App\Models\Order;
 use App\Notifications\CustomTextNotification;
@@ -13,6 +14,7 @@ use GPBMetadata\Google\Api\Auth;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\JWT\Contract\Token;
 
 class RemoveNoneExistOrdersAndReliaseTickets extends Command
@@ -82,13 +84,19 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                         FcmService::sendPushNotification(
                             fcmDto: FcmDto::make(
                                 receivers: FcmReceiverDto::make(
-                                    id: $order->user->id,
-                                    type: $order->user->type
+                                    id: $order->customer->id,
+                                    type: UserType::Customer->value
                                 ),
                                 title: 'Order Failed',
-                                body: "Your payment #{$order->id} has been failed.",));
+                                subtitle: 'Payment Failed',
+                                body: "Your payment has been failed.",
+                                  data : [
+                                'type' => 'Epay',
+                                'status' => 'failed',
+                            ]
+                        ));
                     }catch (\Exception $e) {
-
+                    Log::log('error', 'Error sending notification: ' . $e->getMessage());
                     }
                     $order->delete();
                 }
