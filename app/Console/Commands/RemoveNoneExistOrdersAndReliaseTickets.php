@@ -14,6 +14,7 @@ use GPBMetadata\Google\Api\Auth;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\JWT\Contract\Token;
 
 class RemoveNoneExistOrdersAndReliaseTickets extends Command
@@ -95,7 +96,7 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                             ]
                         ));
                     }catch (\Exception $e) {
-
+                    Log::log('error', 'Error sending notification: ' . $e->getMessage());
                     }
                     $order->delete();
                 }
