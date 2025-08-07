@@ -64,11 +64,16 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                         FcmService::sendPushNotification(
                             fcmDto: FcmDto::make(
                                 receivers: FcmReceiverDto::make(
-                                    id: $order->user->id,
-                                    type: $order->user->type
+                                    id: $order->customer->id,
+                                    type: UserType::Customer->value
                                 ),
-                                title: 'Order Verified',
-                                body: "Your payment #{$order->id} has been successfully verified.",
+                                title: 'Order Success',
+                                subtitle: 'Payment Success',
+                                body: "Your payment has been Placed Successfully.",
+                                data : [
+                                    'type' => 'Epay',
+                                    'status' => 'success',
+                                ]
                             ));
                     }catch (\Exception $e) {
                     }
