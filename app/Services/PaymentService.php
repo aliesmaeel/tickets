@@ -20,6 +20,7 @@ class PaymentService
                 'entityId'    => $entityId,
                 'amount'      => number_format($amount, 2, '.', ''),
                 'currency'    => $currency,
+                'paymentType' => 'DB',
                 'merchantTransactionId' => $merchantTransactionId,
             ]);
 
