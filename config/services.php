@@ -49,6 +49,7 @@ return [
         'currency' => env('HYPERPAY_CURRENCY', 'IQD'),
         'test_url_checkout' => env('HYPERPAY_TEST_URL_CHECKOUT', 'https://test.oppwa.com/v1/checkouts'),
         'test_url_verify' => env('HYPERPAY_TEST_URL_VERIFY', 'https://eu-test.oppwa.com/v3/query'),
+        'shopper_result_url' => env('HYPERPAY_SHOPPER_RESULT_URL', 'https://yourdomain.com/payment-result'),
     ],
 
 
