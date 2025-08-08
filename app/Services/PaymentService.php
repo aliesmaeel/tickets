@@ -22,6 +22,7 @@ class PaymentService
                 'currency'    => $currency,
                 'paymentType' => 'DB',
                 'merchantTransactionId' => $merchantTransactionId,
+                'shopperResultUrl' => config('services.hyperpay.shopper_result_url'),
             ]);
 
 
