@@ -23,7 +23,6 @@ class PaymentService
                 'currency'    => $currency,
                 'paymentType' => 'DB',
                 'merchantTransactionId' => $merchantTransactionId,
-                'shopperResultUrl' => $shopperResultUrl,
             ]);
 
 
