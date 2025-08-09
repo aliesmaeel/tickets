@@ -12,7 +12,7 @@ class PaymentService
         $entityId = config('services.hyperpay.entity_id');
         $currency = config('services.hyperpay.currency');
         $url = config('services.hyperpay.test_url_checkout');
-        $shopperResultUrl = 'com.iraqiculture.tickdot://payment_process';
+        $shopperResultUrl = "com.iraqiculture.tickdot://payment_process";
 
         try {
             $response = Http::withHeaders([
@@ -23,6 +23,7 @@ class PaymentService
                 'currency'    => $currency,
                 'paymentType' => 'DB',
                 'merchantTransactionId' => $merchantTransactionId,
+                'shopperResultUrl' => $shopperResultUrl,
             ]);
 
 
