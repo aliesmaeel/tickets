@@ -8,6 +8,7 @@ use App\Enums\UserType;
 use App\Models\FcmToken;
 use App\Models\FcmTopic;
 use App\Models\FcmTopicSubscription;
+use App\Models\Log;
 use Google\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -201,6 +202,10 @@ class FcmService
 
             return self::response(true, 'Notifications have been sent', $response);
         } catch (\Exception $e) {
+            Log::error('FcmService:sendTestPushNotification', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return self::response(false, 'Error: '.$e->getMessage(), null, 500);
         }
     }
