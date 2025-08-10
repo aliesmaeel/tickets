@@ -45,6 +45,7 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
 
             if (!$data || !isset($data['result']['code'])) {
                 $this->warn("❌ Payment not verified for txn {$order->merchant_transaction_id}");
+                $this->removeOrderAndReleaseSeats($order);
                 continue;
             }
 
@@ -104,7 +105,7 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                     Log::log('error', 'Error sending notification: ' . $e->getMessage());
                     }
                     $order->delete();
-                }elseif (preg_match('/^(800\.[17]00|800\.800\.[123])/', $statusCode)) {
+                }elseif (preg_match('/^(800\.[17]00|800\.800\.[123])/', $statusCode) || preg_match('/^(100\.39[765])/', $statusCode)) {
                     $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
                     $updatedSeats=$order->orderSeats->each(function ($orderSeat) {
                         $orderSeat->eventSeat->update(['status' => 'available']);
@@ -134,5 +135,32 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                 $this->warn("⚠️ Unexpected result code for Order #{$order->id}");
             }
         }
+    }
+
+    private function removeOrderAndReleaseSeats(Order $order)
+    {
+        $order->orderSeats->each(function ($orderSeat) {
+            $orderSeat->eventSeat->update(['status' => 'available']);
+        });
+        try {
+            FcmService::sendPushNotification(
+                fcmDto: FcmDto::make(
+                    receivers: FcmReceiverDto::make(
+                        id: $order->customer->id,
+                        type: UserType::Customer->value
+                    ),
+                    title: 'Order Failed',
+                    subtitle: 'Payment Failed',
+                    body: "Your payment has been failed.",
+                    data : [
+                        'type' => 'Epay',
+                        'status' => 'failed',
+                    ]
+                ));
+        }catch (\Exception $e) {
+            Log::log('error', 'Error sending notification: ' . $e->getMessage());
+        }
+        $order->delete();
+        $this->info("✅ Order #{$order->id} removed and seats released.");
     }
 }
