@@ -48,7 +48,7 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                 continue;
             }
 
-            if ($data['result']['code'] === '000.000.100') {
+            if ($data['result']['code'] === '000.000.100' || $data['result']['code'] === '000.000.000') {
                 $record = $data['records'][0] ?? [];
                 $transactionId = $record['id'] ?? null;
                 $paymentType = $record['paymentType'] ?? null;
@@ -102,6 +102,30 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                         ));
                     }catch (\Exception $e) {
                     Log::log('error', 'Error sending notification: ' . $e->getMessage());
+                    }
+                    $order->delete();
+                }elseif ($statusCode==='100.396.103'){
+                    $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
+                    $updatedSeats=$order->orderSeats->each(function ($orderSeat) {
+                        $orderSeat->eventSeat->update(['status' => 'available']);
+                    });
+                    try {
+                        FcmService::sendPushNotification(
+                            fcmDto: FcmDto::make(
+                                receivers: FcmReceiverDto::make(
+                                    id: $order->customer->id,
+                                    type: UserType::Customer->value
+                                ),
+                                title: 'Order Failed',
+                                subtitle: 'Payment Failed',
+                                body: "Your payment has been failed.",
+                                data : [
+                                    'type' => 'Epay',
+                                    'status' => 'failed',
+                                ]
+                            ));
+                    }catch (\Exception $e) {
+                        Log::log('error', 'Error sending notification: ' . $e->getMessage());
                     }
                     $order->delete();
                 }
