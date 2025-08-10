@@ -202,10 +202,8 @@ class FcmService
 
             return self::response(true, 'Notifications have been sent', $response);
         } catch (\Exception $e) {
-            Log::error('FcmService:sendTestPushNotification', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            \Illuminate\Support\Facades\Log::log('error', 'Error sending notification: ' . $e->getMessage());
+
             return self::response(false, 'Error: '.$e->getMessage(), null, 500);
         }
     }
