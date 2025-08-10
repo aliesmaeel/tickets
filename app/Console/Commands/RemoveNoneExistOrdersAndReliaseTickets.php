@@ -83,54 +83,14 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                 }elseif ($statusCode ==='100.396.103')
                 {
                     $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
-                    $updatedSeats=$order->orderSeats->each(function ($orderSeat) {
-                    $orderSeat->eventSeat->update(['status' => 'available']);
-                     });
-                    try {
-                        FcmService::sendPushNotification(
-                            fcmDto: FcmDto::make(
-                                receivers: FcmReceiverDto::make(
-                                    id: $order->customer->id,
-                                    type: UserType::Customer->value
-                                ),
-                                title: 'Order Failed',
-                                subtitle: 'Payment Failed',
-                                body: "Your payment has been failed.",
-                                  data : [
-                                'type' => 'Epay',
-                                'status' => 'failed',
-                            ]
-                        ));
-                    }catch (\Exception $e) {
-                    Log::log('error', 'Error sending notification: ' . $e->getMessage());
-                    }
-                    $order->delete();
-                }elseif (preg_match('/^(800\.[17]00|800\.800\.[123])/', $statusCode) || preg_match('/^(100\.39[765])/', $statusCode)) {
-                    $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
-                    $updatedSeats=$order->orderSeats->each(function ($orderSeat) {
-                        $orderSeat->eventSeat->update(['status' => 'available']);
-                    });
-                    try {
-                        FcmService::sendPushNotification(
-                            fcmDto: FcmDto::make(
-                                receivers: FcmReceiverDto::make(
-                                    id: $order->customer->id,
-                                    type: UserType::Customer->value
-                                ),
-                                title: 'Order Failed',
-                                subtitle: 'Payment Failed',
-                                body: "Your payment has been failed.",
-                                data : [
-                                    'type' => 'Epay',
-                                    'status' => 'failed',
-                                ]
-                            ));
-                    }catch (\Exception $e) {
-                        Log::log('error', 'Error sending notification: ' . $e->getMessage());
-                    }
-                    $order->delete();
-                }
+                    $this->removeOrderAndReleaseSeats($order);
 
+                }elseif (preg_match('/^(800\.[17]00|800\.800\.[123])/', $statusCode) || preg_match('/^(100\.39[765])/', $statusCode)) {
+
+                    $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
+                    $this->removeOrderAndReleaseSeats($order);
+
+                }
             } else {
                 $this->warn("⚠️ Unexpected result code for Order #{$order->id}");
             }
@@ -142,7 +102,10 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
         $order->orderSeats->each(function ($orderSeat) {
             $orderSeat->eventSeat->update(['status' => 'available']);
         });
+
         try {
+            Log::log('step1', 'Order' . $order->id . ' recivers ' . $order->customer->id);
+
             FcmService::sendPushNotification(
                 fcmDto: FcmDto::make(
                     receivers: FcmReceiverDto::make(
@@ -157,6 +120,8 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                         'status' => 'failed',
                     ]
                 ));
+            Log::log('step2', 'Order' . $order->id . ' recivers ' . $order->customer->id);
+
         }catch (\Exception $e) {
             Log::log('error', 'Error sending notification: ' . $e->getMessage());
         }
