@@ -84,13 +84,12 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                 {
                     $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
                     $this->removeOrderAndReleaseSeats($order);
-                    $order->delete();
 
                 }elseif (preg_match('/^(800\.[17]00|800\.800\.[123])/', $statusCode) || preg_match('/^(100\.39[765])/', $statusCode)) {
 
                     $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
                     $this->removeOrderAndReleaseSeats($order);
-                    $order->delete();
+
                 }
             } else {
                 $this->warn("⚠️ Unexpected result code for Order #{$order->id}");
@@ -103,7 +102,10 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
         $order->orderSeats->each(function ($orderSeat) {
             $orderSeat->eventSeat->update(['status' => 'available']);
         });
+
         try {
+            Log::log('step1', 'Order' . $order->id . ' recivers ' . $order->customer->id);
+
             FcmService::sendPushNotification(
                 fcmDto: FcmDto::make(
                     receivers: FcmReceiverDto::make(
@@ -118,6 +120,8 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                         'status' => 'failed',
                     ]
                 ));
+            Log::log('step2', 'Order' . $order->id . ' recivers ' . $order->customer->id);
+
         }catch (\Exception $e) {
             Log::log('error', 'Error sending notification: ' . $e->getMessage());
         }
