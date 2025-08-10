@@ -104,7 +104,7 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                     Log::log('error', 'Error sending notification: ' . $e->getMessage());
                     }
                     $order->delete();
-                }elseif ($statusCode==='100.396.103'){
+                }elseif ($statusCode==='100.396.103' || $statusCode === '800.100.162') {
                     $order= Order::where('merchant_transaction_id', $order->merchant_transaction_id)->first();
                     $updatedSeats=$order->orderSeats->each(function ($orderSeat) {
                         $orderSeat->eventSeat->update(['status' => 'available']);
