@@ -197,13 +197,13 @@ class FcmService
             $response = self::sendNotification($fcmTokens, $fcmDto, $accessToken, $projectId);
 
             if (isset($response['error'])) {
+                \Illuminate\Support\Facades\Log::log('error', 'Error sending notification: ' . $e->getMessage());
                 return self::response(false, 'Error: '.$response['error']['message'], $response, 500);
             }
 
             return self::response(true, 'Notifications have been sent', $response);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::log('error', 'Error sending notification: ' . $e->getMessage());
-
             return self::response(false, 'Error: '.$e->getMessage(), null, 500);
         }
     }
