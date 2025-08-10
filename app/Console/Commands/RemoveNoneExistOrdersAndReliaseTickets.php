@@ -104,7 +104,7 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
         });
 
         try {
-            Log::log('step1', 'Order' . $order->id . ' recivers ' . $order->customer->id);
+            Log::error('step1'.' Order' . $order->id . ' recivers ' . $order->customer->id);
 
             FcmService::sendPushNotification(
                 fcmDto: FcmDto::make(
@@ -120,7 +120,7 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
                         'status' => 'failed',
                     ]
                 ));
-            Log::log('step2', 'Order' . $order->id . ' recivers ' . $order->customer->id);
+            Log::error('step2 '.' Order' . $order->id . ' recivers ' . $order->customer->id);
 
         }catch (\Exception $e) {
             Log::log('error', 'Error sending notification: ' . $e->getMessage());
