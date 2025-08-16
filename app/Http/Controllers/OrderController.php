@@ -219,46 +219,74 @@ class OrderController extends Controller
     {
         $data = $this->hyperPayService->verifyPaymentByTransactionId($merchantTransactionId);
 
+
         if (!$data || !isset($data['result']['code'])) {
             Log::warning('Payment verification failed or invalid result', ['data' => $data]);
-            return response()->json(['error' => 'Payment not verified'], 400);
+            return response()->json(['status' => 'error', 'message' => 'Payment not verified'], 400);
         }
 
-        $code = $data['result']['code'];
 
-        if ($code === '000.000.100') {
-            $record = $data['records'][0] ?? [];
 
-            $transactionId = $record['id'] ?? null;
-            $paymentType = $record['paymentType'] ?? null;
-            $brand = $record['paymentBrand'] ?? null;
-            $amount = $record['amount'] ?? null;
-            $currency = $record['currency'] ?? null;
-            $statusCode = $record['result']['code'] ?? null;
-            $statusDescription = $record['result']['description'] ?? null;
 
-            Log::info('Payment Verified', compact(
-                'transactionId', 'paymentType', 'brand', 'amount', 'currency', 'statusCode', 'statusDescription'
-            ));
+        $successPattern = '/^(000\.000\.|000\.100\.1|000\.[36]|000\.400\.[1][12]0)/';
+        $pendingPattern = '/^(000\.200)/';
+        $reviewPattern  = '/^(000\.400\.0[^3]|000\.400\.100)/'; // success but manual review
+        $rejectPattern  = '/^(000\.400\.[1][0-9][1-9]|000\.400\.2|800\.[17]00|800\.800\.[123]|900\.[1234]00|000\.400\.030|800\.[56]|999\.|600\.1|800\.800\.[84]|100\.39[765]|800\.400\.1)/';
 
+        $record = $data['records'][0] ?? [];
+
+        $transactionId = $record['id'] ?? null;
+        $paymentType = $record['paymentType'] ?? null;
+        $brand = $record['paymentBrand'] ?? null;
+        $amount = $record['amount'] ?? null;
+        $currency = $record['currency'] ?? null;
+        $statusCode = $record['result']['code'] ?? null;
+        $statusDescription = $record['result']['description'] ?? null;
+
+        $responseData = [
+            'transaction_id'     => $transactionId,
+            'payment_type'       => $paymentType,
+            'brand'              => $brand,
+            'amount'             => $amount,
+            'currency'           => $currency,
+            'status_code'        => $statusCode,
+            'status_description' => $statusDescription,
+        ];
+
+        // ---- Decide response type ----
+        if (preg_match($successPattern, $statusCode)) {
+            Log::info('Payment Verified (Success)', $responseData);
+
+            // Update order if fully captured
             if ($statusCode === '000.100.110') {
                 $order = Order::where('merchant_transaction_id', $merchantTransactionId)->first();
                 $order?->update(['reservation_status' => true]);
             }
 
-            return response()->json([
-                'transaction_id' => $transactionId,
-                'payment_type' => $paymentType,
-                'brand' => $brand,
-                'amount' => $amount,
-                'currency' => $currency,
-                'status_code' => $statusCode,
-                'status_description' => $statusDescription,
-            ]);
+            return response()->json(['status' => 'success'] + $responseData);
         }
 
-        return response()->json(['error' => 'Unexpected result code', 'data' => $data], 400);
+        if (preg_match($pendingPattern, $statusCode)) {
+            Log::info('Payment Pending', $responseData);
+
+            return response()->json(['status' => 'pending'] + $responseData);
+        }
+
+        if (preg_match($reviewPattern, $statusCode)) {
+            Log::warning('Payment Pending', $responseData);
+            return response()->json(['status' => 'pending'] + $responseData);
+        }
+
+        if (preg_match($rejectPattern, $statusCode)) {
+            Log::error('Payment Rejected', $responseData);
+            return response()->json(['status' => 'reject'] + $responseData);
+        }
+
+        // Fallback
+        Log::warning('Payment verification unexpected result code', ['code' => $statusCode, 'data' => $data]);
+        return response()->json(['status' => 'error', 'message' => 'Unexpected result code', 'data' => $data], 400);
     }
+
 
 
 
