@@ -45,7 +45,6 @@ class RemoveNoneExistOrdersAndReliaseTickets extends Command
 
             if (!$data || !isset($data['result']['code'])) {
                 $this->warn("❌ Payment not verified for txn {$order->merchant_transaction_id}");
-                $this->removeOrderAndReleaseSeats($order);
                 continue;
             }
 
