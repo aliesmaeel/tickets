@@ -16,11 +16,22 @@ class HyperPayService
             'Authorization' => "Bearer $token",
         ])->get($url);
 
-        if ($response->successful()) {
+
+        if($response->status() === 200) {
             return $response->json();
         }
 
-        Log::error('HyperPay verification failed', ['transaction_id' => $merchantTransactionId, 'response' => $response->body()]);
-        return null;
+        if ($response->status() === 404) {
+            return [
+              'result' => [
+                'code' => $response->json()['result']['code'] ?? null,
+                'description' => 'Transaction not found',
+                'status_code' => 404
+              ]
+            ];
+        }
+
+         return null;
+
     }
 }
