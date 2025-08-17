@@ -240,7 +240,7 @@ class OrderController extends Controller
         $amount = $record['amount'] ?? null;
         $currency = $record['currency'] ?? null;
 
-        if ($data['result']['status_code']==404){
+        if (isset($data['result']['status_code']) && $data['result']['status_code']==404){
             $statusCode= $data['result']['code'] ?? null;
         }else{
             $statusCode = $record['result']['code'] ?? null;
